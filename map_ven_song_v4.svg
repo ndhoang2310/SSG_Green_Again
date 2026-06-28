@@ -1,0 +1,244 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 800" font-family="sans-serif">
+  <defs>
+    <pattern id="forest" patternUnits="userSpaceOnUse" width="20" height="20">
+      <circle cx="10" cy="10" r="7" fill="#2d5a1e" opacity="0.6"/>
+      <circle cx="3" cy="5" r="5" fill="#3a6b25" opacity="0.5"/>
+      <circle cx="16" cy="15" r="4" fill="#244a16" opacity="0.4"/>
+    </pattern>
+    <pattern id="grass" patternUnits="userSpaceOnUse" width="12" height="12">
+      <rect width="12" height="12" fill="#8db860"/>
+      <line x1="6" y1="2" x2="6" y2="8" stroke="#7aab4d" stroke-width="0.8"/>
+      <line x1="3" y1="5" x2="3" y2="11" stroke="#7aab4d" stroke-width="0.6"/>
+      <line x1="9" y1="4" x2="9" y2="10" stroke="#7aab4d" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="dirt" patternUnits="userSpaceOnUse" width="10" height="10">
+      <rect width="10" height="10" fill="#c4a96a"/>
+      <circle cx="3" cy="3" r="1" fill="#b8974d" opacity="0.5"/>
+      <circle cx="8" cy="7" r="0.8" fill="#b8974d" opacity="0.4"/>
+    </pattern>
+    <pattern id="greyGround" patternUnits="userSpaceOnUse" width="8" height="8">
+      <rect width="8" height="8" fill="#d4c9b8"/>
+      <rect x="1" y="1" width="6" height="6" fill="#cbbfa8" rx="1"/>
+    </pattern>
+    <linearGradient id="waterGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5a8a6a"/>
+      <stop offset="50%" stop-color="#4a7a5a"/>
+      <stop offset="100%" stop-color="#3a6a4a"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="800" fill="#e8dcc8"/>
+
+  <!-- ===== FOREST BORDER ===== -->
+  <!-- North forest -->
+  <rect x="0" y="0" width="900" height="65" fill="url(#forest)"/>
+  <text x="450" y="30" text-anchor="middle" fill="#c8e0b0" font-size="11" font-weight="bold">🌲 RỪNG CÂY — ĐỒI NÚI (BẮC)</text>
+
+  <!-- West forest -->
+  <rect x="0" y="65" width="115" height="600" fill="url(#forest)"/>
+  <text x="57" y="400" text-anchor="middle" fill="#c8e0b0" font-size="10" font-weight="bold" transform="rotate(-90, 57, 400)">🌲 RỪNG TÂY</text>
+
+  <!-- East forest (partial - NE) -->
+  <rect x="700" y="65" width="200" height="300" fill="url(#forest)"/>
+  <text x="800" y="220" text-anchor="middle" fill="#c8e0b0" font-size="10" font-weight="bold">🌲 RỪNG ĐÔNG BẮC</text>
+
+  <!-- South forest -->
+  <rect x="0" y="665" width="900" height="135" fill="url(#forest)"/>
+  <text x="450" y="740" text-anchor="middle" fill="#c8e0b0" font-size="11" font-weight="bold">🌲 RỪNG CÂY — ĐỒI NÚI (NAM)</text>
+
+  <!-- ===== BACKGROUND ZONES ===== -->
+
+  <!-- Zone 1: Khu dân cư (NW) -->
+  <rect x="115" y="65" width="230" height="260" fill="url(#grass)" stroke="#3a6b25" stroke-width="1" rx="4"/>
+  <text x="230" y="85" text-anchor="middle" fill="#2d5010" font-size="13" font-weight="bold">🏘️ KHU DÂN CƯ</text>
+  <text x="230" y="102" text-anchor="middle" fill="#4a7a30" font-size="10">PL: 60 | Spawn Rate: 3'~2-3 món</text>
+
+  <!-- Houses in Khu dân cư -->
+  <rect x="140" y="120" width="40" height="30" fill="#d4a76a" stroke="#8b6914" stroke-width="1" rx="2"/>
+  <polygon points="137,120 160,105 183,120" fill="#c44e2a"/>
+  <rect x="200" y="125" width="35" height="28" fill="#d4a76a" stroke="#8b6914" stroke-width="1" rx="2"/>
+  <polygon points="197,125 217,110 237,125" fill="#c44e2a"/>
+  <rect x="255" y="118" width="38" height="30" fill="#d4a76a" stroke="#8b6914" stroke-width="1" rx="2"/>
+  <polygon points="252,118 274,103 296,118" fill="#c44e2a"/>
+
+  <!-- Hotspot: Residential St -->
+  <rect x="150" y="220" width="170" height="50" fill="#e8a020" opacity="0.3" rx="6" stroke="#c88010" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="235" y="242" text-anchor="middle" fill="#8b6010" font-size="11" font-weight="bold">🟠 HOTSPOT: Residential St.</text>
+  <text x="235" y="258" text-anchor="middle" fill="#8b6010" font-size="9">🐿️ Sóc (C4) — gần bụi rác</text>
+
+  <!-- Zone 2: Nhà cô Tư (N-center) -->
+  <rect x="345" y="65" width="100" height="155" fill="#edc98a" stroke="#8b6914" stroke-width="1.5" rx="4"/>
+  <text x="395" y="85" text-anchor="middle" fill="#6b4a10" font-size="11" font-weight="bold">🏚️ NHÀ CÔ TƯ</text>
+  <!-- Tiệm tạp hóa -->
+  <rect x="360" y="100" width="55" height="40" fill="#e8b870" stroke="#8b6914" stroke-width="1" rx="2"/>
+  <polygon points="357,100 387,85 417,100" fill="#c48830"/>
+  <text x="387" y="110" text-anchor="middle" fill="#5a3a0a" font-size="8">Tiệm tạp hóa</text>
+  <text x="387" y="122" text-anchor="middle" fill="#5a3a0a" font-size="8">👩 Cô Tư</text>
+  <!-- Ảnh con gái trên quầy -->
+  <rect x="395" y="130" width="12" height="10" fill="#f0e8d0" stroke="#aaa" stroke-width="0.5"/>
+  <text x="401" y="138" text-anchor="middle" font-size="6" fill="#888">📷</text>
+  <text x="395" y="158" text-anchor="middle" fill="#8b6010" font-size="8">Context clue: ảnh cũ</text>
+
+  <!-- Zone 3: Công viên (NE) -->
+  <rect x="445" y="65" width="255" height="290" fill="url(#grass)" stroke="#3a6b25" stroke-width="1.5" rx="4"/>
+  <text x="572" y="85" text-anchor="middle" fill="#2d5010" font-size="13" font-weight="bold">🌳 CÔNG VIÊN</text>
+  <text x="572" y="102" text-anchor="middle" fill="#4a7a30" font-size="10">PL: 55 | 🟠 Picnic Area</text>
+
+  <!-- Cối xay gió -->
+  <line x1="540" y1="140" x2="540" y2="90" stroke="#8b6914" stroke-width="3"/>
+  <rect x="530" y="90" width="20" height="12" fill="#d4a76a" stroke="#5a3a0a" stroke-width="1"/>
+  <text x="540" y="78" text-anchor="middle" font-size="9" fill="#5a3a0a">Cối xay gió</text>
+
+  <!-- Cây lớn -->
+  <circle cx="610" cy="115" r="22" fill="#3a6b25"/>
+  <circle cx="610" cy="115" r="18" fill="#4a8b30"/>
+
+  <!-- Thảm picnic -->
+  <rect x="480" y="160" width="100" height="50" fill="#e8c0a0" stroke="#c49060" stroke-width="1" rx="3"/>
+  <text x="530" y="185" text-anchor="middle" fill="#8b5010" font-size="10">Thảm picnic</text>
+  <text x="530" y="200" text-anchor="middle" fill="#6b3a0a" font-size="9">🧑 Anh Tùng</text>
+
+  <!-- Bé Na gần cây -->
+  <text x="640" y="120" text-anchor="middle" font-size="10" fill="#6b3a0a">👧 Bé Na</text>
+
+  <!-- Chim -->
+  <text x="620" y="100" text-anchor="middle" font-size="12">🐦</text>
+  <text x="620" y="95" text-anchor="middle" font-size="8" fill="#6b3a0a">Chim (C4)</text>
+
+  <!-- Hotspot Picnic -->
+  <rect x="470" y="240" width="180" height="50" fill="#e8a020" opacity="0.3" rx="6" stroke="#c88010" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="560" y="262" text-anchor="middle" fill="#8b6010" font-size="11" font-weight="bold">🟠 HOTSPOT: Picnic Area</text>
+  <text x="560" y="278" text-anchor="middle" fill="#8b6010" font-size="9">Rác sinh hoạt: chai nhựa, túi nilon, hộp xốp</text>
+
+  <!-- Mỏm đá NE -->
+  <ellipse cx="685" cy="200" rx="25" ry="20" fill="#888" stroke="#666" stroke-width="1.5"/>
+  <text x="685" y="195" text-anchor="middle" fill="#ddd" font-size="7" font-weight="bold">Mỏm đá</text>
+
+  <!-- ===== MAIN ROAD ===== -->
+  <rect x="115" y="410" width="785" height="16" fill="#c4a96a" stroke="#a08850" stroke-width="1" rx="2"/>
+  <text x="115" y="437" fill="#6b5010" font-size="11" font-weight="bold">═══════════════ ĐƯỜNG TRỤC CHÍNH (~Y=50%) ═══════════════</text>
+
+  <!-- ===== BOTTOM HALF ZONES ===== -->
+
+  <!-- Zone 4: Nhà văn hóa (SW) -->
+  <rect x="115" y="426" width="245" height="240" fill="url(#greyGround)" stroke="#b0a090" stroke-width="1.5" rx="4"/>
+  <!-- Nhà văn hóa building -->
+  <rect x="160" y="460" width="100" height="70" fill="#e8d8c0" stroke="#aa8860" stroke-width="1.5" rx="2"/>
+  <polygon points="155,460 210,425 265,460" fill="#c44e2a"/>
+  <text x="210" y="495" text-anchor="middle" fill="#5a2a0a" font-size="10" font-weight="bold">NHÀ VĂN HÓA</text>
+  <text x="210" y="510" text-anchor="middle" fill="#8b5010" font-size="9">Mái ngói đỏ</text>
+
+  <!-- Bác Xanh -->
+  <rect x="170" y="540" width="15" height="18" fill="#5a7a4a" rx="2"/>
+  <rect x="185" y="540" width="40" height="5" fill="#8b6010"/>
+  <text x="215" y="555" anchor="start" fill="#2d5010" font-size="10" font-weight="bold">🧓 Bác Xanh</text>
+  <text x="215" y="568" anchor="start" fill="#4a7a30" font-size="8">Mentor chính — Ghế đá</text>
+
+  <!-- Spawn point -->
+  <circle cx="135" cy="555" r="8" fill="#4488ff" stroke="#2266cc" stroke-width="2"/>
+  <text x="135" y="545" text-anchor="middle" fill="#2266cc" font-size="10" font-weight="bold">⚡ SPAWN</text>
+  <text x="135" y="575" text-anchor="middle" fill="#666" font-size="7">góc dưới trái</text>
+
+  <!-- Spawn to NVH path -->
+  <line x1="135" y1="563" x2="175" y2="549" stroke="#8b6010" stroke-width="2" stroke-dasharray="4,3"/>
+
+  <!-- Zone 5: Trung tâm Tái chế (SE) -->
+  <rect x="360" y="426" width="240" height="240" fill="url(#greyGround)" stroke="#b0a090" stroke-width="1.5" rx="4"/>
+  <text x="480" y="446" text-anchor="middle" fill="#4a4a4a" font-size="13" font-weight="bold">♻️ TRUNG TÂM TÁI CHẾ</text>
+
+  <!-- RC Building -->
+  <rect x="400" y="465" width="130" height="55" fill="#c0c8d0" stroke="#8090a0" stroke-width="1.5" rx="2"/>
+  <polygon points="397,465 465,440 533,465" fill="#7080a0"/>
+  <text x="465" y="488" text-anchor="middle" fill="#3a3a3a" font-size="10" font-weight="bold">Phân loại rác</text>
+  <text x="465" y="503" text-anchor="middle" fill="#555" font-size="9">4 thùng: 🟢HC 🔵TC 🟡VC 🔴ĐH</text>
+
+  <!-- Chị Lan -->
+  <text x="465" y="525" text-anchor="middle" fill="#3a5a3a" font-size="10">👩‍🔧 Chị Lan</text>
+
+  <!-- ===== RIVER ===== -->
+  <!-- Sông chảy Bắc → Đông Nam -->
+  <path d="M 650 355 Q 620 380 580 400 Q 530 425 500 440 Q 470 460 450 490 Q 430 520 420 560 Q 410 600 430 630 Q 460 660 520 665 L 600 668" 
+        fill="none" stroke="url(#waterGrad)" stroke-width="30" stroke-linecap="round" opacity="0.85"/>
+  <path d="M 650 355 Q 620 380 580 400 Q 530 425 500 440 Q 470 460 450 490 Q 430 520 420 560 Q 410 600 430 630 Q 460 660 520 665 L 600 668" 
+        fill="none" stroke="#6aa080" stroke-width="26" stroke-linecap="round" opacity="0.3"/>
+  
+  <!-- Water flow arrows -->
+  <text x="630" y="368" font-size="12" fill="#fff" opacity="0.8">→</text>
+  <text x="550" y="445" font-size="14" fill="#fff" opacity="0.8">→</text>
+  <text x="470" y="525" font-size="14" fill="#fff" opacity="0.8">→</text>
+  <text x="445" y="610" font-size="14" fill="#fff" opacity="0.8">→</text>
+
+  <text x="560" y="440" text-anchor="middle" fill="#c8e8d0" font-size="10" font-weight="bold">≈ SÔNG ≈</text>
+
+  <!-- Riverside NE marker -->
+  <rect x="670" y="265" width="70" height="30" fill="#e8c040" opacity="0.4" rx="4" stroke="#c8a020" stroke-width="1"/>
+  <text x="705" y="278" text-anchor="middle" fill="#8b6010" font-size="8">🟡 Riverside NE</text>
+  <text x="705" y="290" text-anchor="middle" fill="#8b6010" font-size="7">PL: 45</text>
+
+  <!-- Ông Sáu at Riverside NE -->
+  <text x="700" y="250" text-anchor="middle" font-size="10" fill="#6b3a0a">👴 Ông Sáu (NE)</text>
+
+  <!-- ===== ĐẬP NƯỚC ===== -->
+  <rect x="360" y="668" width="440" height="130" fill="#b0a898" stroke="#8090a0" stroke-width="2" rx="4"/>
+  
+  <!-- Dam structure -->
+  <rect x="400" y="668" width="340" height="25" fill="#9098a0" stroke="#606870" stroke-width="1"/>
+  <text x="570" y="685" text-anchor="middle" fill="#2a2a2a" font-size="12" font-weight="bold">🏗️ ĐẬP NƯỚC — 3 CỐNG XẢ</text>
+
+  <!-- Cống 1 -->
+  <rect x="420" y="700" width="70" height="80" fill="#c0c8d0" stroke="#606870" stroke-width="1.5" rx="3"/>
+  <rect x="430" y="710" width="50" height="25" fill="#3050a0" opacity="0.6" rx="2"/>
+  <text x="455" y="730" text-anchor="middle" fill="#c08020" font-size="9" font-weight="bold">Cống 1</text>
+  <text x="455" y="745" text-anchor="middle" fill="#c08020" font-size="8">🔴 PL: 80</text>
+  <text x="455" y="760" text-anchor="middle" fill="#666" font-size="7">Mở C2C</text>
+
+  <!-- Cống 2 -->
+  <rect x="500" y="700" width="70" height="80" fill="#c0c8d0" stroke="#606870" stroke-width="1.5" rx="3"/>
+  <rect x="510" y="710" width="50" height="25" fill="#3050a0" opacity="0.6" rx="2"/>
+  <text x="535" y="730" text-anchor="middle" fill="#c08020" font-size="9" font-weight="bold">Cống 2</text>
+  <text x="535" y="745" text-anchor="middle" fill="#c08020" font-size="8">🔴 PL: 80</text>
+  <text x="535" y="760" text-anchor="middle" fill="#666" font-size="7">Mở C3</text>
+
+  <!-- Cống 3 -->
+  <rect x="580" y="700" width="70" height="80" fill="#c0c8d0" stroke="#606870" stroke-width="1.5" rx="3"/>
+  <rect x="590" y="710" width="50" height="25" fill="#3050a0" opacity="0.6" rx="2"/>
+  <text x="615" y="730" text-anchor="middle" fill="#c08020" font-size="9" font-weight="bold">Cống 3</text>
+  <text x="615" y="745" text-anchor="middle" fill="#c08020" font-size="8">🔴 PL: 80</text>
+  <text x="615" y="760" text-anchor="middle" fill="#666" font-size="7">Mở C3</text>
+
+  <!-- Fish under dam -->
+  <text x="530" y="790" text-anchor="middle" font-size="12">🐟</text>
+  <text x="530" y="805" text-anchor="middle" fill="#2a6020" font-size="9">Cá (C4) — dưới chân đập</text>
+
+  <!-- Hotspot Dam -->
+  <rect x="410" y="698" width="310" height="88" fill="#e04040" opacity="0.15" rx="6" stroke="#a02020" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="565" y="696" text-anchor="middle" fill="#8b2020" font-size="9" font-weight="bold">🔴 HOTSPOT: Dam</text>
+
+  <!-- ===== ĐƯỜNG ĐI ===== -->
+  <!-- Path: Spawn → Nhà văn hóa -->
+  <line x1="135" y1="563" x2="190" y2="530" stroke="#8b8060" stroke-width="2" stroke-dasharray="5,3" opacity="0.6"/>
+  
+  <!-- Path: Nhà văn hóa → RC -->
+  <line x1="280" y1="545" x2="390" y2="545" stroke="#8b8060" stroke-width="2" stroke-dasharray="5,3" opacity="0.6"/>
+
+  <!-- Path: Nhà văn hóa → Khu dân cư (lên Bắc) -->
+  <line x1="230" y1="430" x2="230" y2="360" stroke="#8b8060" stroke-width="2" stroke-dasharray="5,3" opacity="0.6"/>
+
+  <!-- Path: RC → Đập -->
+  <line x1="480" y1="666" x2="520" y2="670" stroke="#8b8060" stroke-width="2" stroke-dasharray="5,3" opacity="0.6"/>
+
+  <!-- ===== LEGEND ===== -->
+  <rect x="15" y="710" width="340" height="85" fill="#fff" opacity="0.92" rx="6" stroke="#aaa" stroke-width="1"/>
+  <text x="25" y="728" fill="#333" font-size="10" font-weight="bold">CHÚ GIẢI</text>
+  <text x="25" y="744" fill="#666" font-size="9">🟠 Cam / 🔴 Đỏ = Hotspot (mức ô nhiễm)</text>
+  <text x="25" y="758" fill="#666" font-size="9">🧓🧑👩👴👧 = NPC | 🐦🐟🐿️ = Động vật (C4)</text>
+  <text x="25" y="772" fill="#666" font-size="9">≈ = Sông | ═══ = Đường trục chính | ⚡ = Spawn</text>
+  <text x="25" y="786" fill="#666" font-size="9">♻️ = Trung tâm Tái chế | 🏛️ = Nhà văn hóa</text>
+
+  <!-- Scale -->
+  <text x="720" y="788" fill="#888" font-size="9">~800 × 700 studs</text>
+</svg>

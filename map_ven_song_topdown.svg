@@ -1,0 +1,302 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8f5e9"/>
+      <stop offset="100%" stop-color="#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="riverGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#5c8a8a"/>
+      <stop offset="30%" stop-color="#4a7a8a"/>
+      <stop offset="70%" stop-color="#4a7a8a"/>
+      <stop offset="100%" stop-color="#5c8a8a"/>
+    </linearGradient>
+    <linearGradient id="pathGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c9a96e"/>
+      <stop offset="100%" stop-color="#b8955a"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+    <filter id="softShadow" x="-3%" y="-3%" width="106%" height="106%">
+      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.1"/>
+    </filter>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#999"/>
+    </marker>
+  </defs>
+
+  <!-- BACKGROUND -->
+  <rect width="1000" height="800" fill="#f5f0e8"/>
+
+  <!-- ====== RỪNG CÂY (top, visual background) ====== -->
+  <rect x="0" y="0" width="1000" height="120" fill="#2e7d32" rx="0"/>
+  <text x="500" y="45" text-anchor="middle" fill="#c8e6c9" font-size="14" font-weight="bold" font-family="Arial">RỪNG CÂY (Visual Background — không vào được)</text>
+  <!-- Tree silhouettes -->
+  <g fill="#1b5e20" opacity="0.6">
+    <polygon points="80,25 95,110 65,110"/><polygon points="95,40 110,110 80,110"/>
+    <polygon points="180,20 195,115 165,115"/><polygon points="195,35 210,115 180,115"/>
+    <polygon points="300,30 312,115 288,115"/><polygon points="312,42 324,115 300,115"/>
+    <polygon points="420,22 435,115 405,115"/><polygon points="435,38 450,115 420,115"/>
+    <polygon points="560,25 575,115 545,115"/><polygon points="575,40 590,115 560,115"/>
+    <polygon points="700,28 715,115 685,115"/><polygon points="715,42 730,115 700,115"/>
+    <polygon points="840,22 855,115 825,115"/><polygon points="855,38 870,115 840,115"/>
+    <polygon points="920,30 935,115 905,115"/>
+  </g>
+
+  <!-- Tree planting spots -->
+  <g>
+    <rect x="60" y="90" width="90" height="35" fill="#6d4c41" rx="4" opacity="0.7"/>
+    <text x="105" y="113" text-anchor="middle" fill="#fff" font-size="9" font-family="Arial">🌱 Đất trồng cây</text>
+    <rect x="820" y="85" width="90" height="35" fill="#6d4c41" rx="4" opacity="0.7"/>
+    <text x="865" y="108" text-anchor="middle" fill="#fff" font-size="9" font-family="Arial">🌱 Đất trồng cây</text>
+  </g>
+
+  <!-- ====== ZONE DIVIDERS ====== -->
+  <!-- Vertical line between Residential and Park -->
+  <line x1="415" y1="120" x2="415" y2="600" stroke="#ccc" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- ====== KHU DÂN CƯ (left, rows 2-3) ====== -->
+  <rect x="0" y="120" width="415" height="280" fill="#f5ebe0" stroke="#d7ccc8" stroke-width="1.5" rx="2"/>
+  <text x="207" y="143" text-anchor="middle" fill="#5d4037" font-size="15" font-weight="bold" font-family="Arial">🏘️ KHU DÂN CƯ</text>
+  <text x="207" y="162" text-anchor="middle" fill="#8d6e63" font-size="10" font-family="Arial">PL ban đầu: 60 | Spawn: 2-3 món / 3 phút</text>
+
+  <!-- NPC Cô Tư + Shop -->
+  <rect x="130" y="195" width="130" height="70" fill="#fff3e0" stroke="#ffb74d" stroke-width="1.5" rx="3" filter="url(#softShadow)"/>
+  <text x="195" y="215" text-anchor="middle" fill="#e65100" font-size="10" font-weight="bold" font-family="Arial">Tiệm tạp hóa</text>
+  <text x="195" y="232" text-anchor="middle" fill="#bf360c" font-size="11" font-family="Arial">👩 Cô Tư (Unaware)</text>
+  <text x="195" y="248" text-anchor="middle" fill="#999" font-size="8" font-family="Arial">Xả rác theo thói quen</text>
+
+  <!-- Houses -->
+  <rect x="30" y="200" width="65" height="55" fill="#fff" stroke="#bdbdbd" stroke-width="1" rx="2"/>
+  <polygon points="30,200 62,178 95,200" fill="#ef5350"/>
+  <rect x="275" y="210" width="65" height="50" fill="#fff" stroke="#bdbdbd" stroke-width="1" rx="2"/>
+  <polygon points="275,210 307,190 340,210" fill="#42a5f5"/>
+
+  <!-- Hotspot marker -->
+  <rect x="30" y="320" width="160" height="28" fill="#ff9800" rx="4" opacity="0.85"/>
+  <text x="110" y="339" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold" font-family="Arial">🟠 HOTSPOT: Residential Street</text>
+
+  <!-- Rác icon -->
+  <g opacity="0.5">
+    <circle cx="60" cy="370" r="4" fill="#8d6e63"/>
+    <rect x="140" y="367" width="12" height="7" fill="#ffcc80" rx="1"/>
+    <circle cx="250" cy="372" r="3" fill="#a1887f"/>
+  </g>
+
+  <!-- Sóc area -->
+  <text x="290" y="385" text-anchor="middle" fill="#6d4c41" font-size="10" font-family="Arial">🐿️ Sóc (C4)</text>
+
+  <!-- ====== CÔNG VIÊN / KHU PICNIC (right, rows 2-3) ====== -->
+  <rect x="415" y="120" width="585" height="280" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1.5" rx="2"/>
+  <text x="707" y="143" text-anchor="middle" fill="#2e7d32" font-size="15" font-weight="bold" font-family="Arial">🌳 CÔNG VIÊN / KHU PICNIC</text>
+  <text x="707" y="162" text-anchor="middle" fill="#66bb6a" font-size="10" font-family="Arial">PL ban đầu: 55 | Spawn: 3-4 món / 4 phút</text>
+
+  <!-- Cối xay gió (Landmark) -->
+  <rect x="870" y="180" width="50" height="90" fill="#d7ccc8" stroke="#8d6e63" stroke-width="1.5" rx="2"/>
+  <text x="895" y="205" text-anchor="middle" fill="#5d4037" font-size="8" font-family="Arial">Cối xay</text>
+  <text x="895" y="218" text-anchor="middle" fill="#5d4037" font-size="8" font-family="Arial">gió cũ</text>
+  <!-- Windmill blades -->
+  <g transform="translate(895, 185)">
+    <line x1="-15" y1="0" x2="15" y2="0" stroke="#8d6e63" stroke-width="2"/>
+    <line x1="0" y1="-15" x2="0" y2="15" stroke="#8d6e63" stroke-width="2"/>
+    <line x1="-10" y1="-10" x2="10" y2="10" stroke="#8d6e63" stroke-width="2"/>
+    <line x1="10" y1="-10" x2="-10" y2="10" stroke="#8d6e63" stroke-width="2"/>
+  </g>
+  <text x="895" y="285" text-anchor="middle" fill="#a1887f" font-size="7" font-family="Arial">Landmark</text>
+  <text x="895" y="295" text-anchor="middle" fill="#a1887f" font-size="7" font-family="Arial">toàn map</text>
+
+  <!-- Picnic area -->
+  <rect x="510" y="195" width="140" height="70" fill="#fff9c4" stroke="#fdd835" stroke-width="1.5" rx="3" filter="url(#softShadow)"/>
+  <text x="580" y="215" text-anchor="middle" fill="#f57f17" font-size="10" font-weight="bold" font-family="Arial">Thảm picnic</text>
+  <text x="580" y="232" text-anchor="middle" fill="#e65100" font-size="10" font-family="Arial">🧑 Anh Tùng (Unaware)</text>
+  <text x="580" y="248" text-anchor="middle" fill="#999" font-size="8" font-family="Arial">"Sẽ có người dọn"</text>
+
+  <!-- Bé Na -->
+  <text x="690" y="330" text-anchor="middle" fill="#e91e63" font-size="10" font-family="Arial">👧 Bé Na (gần cây)</text>
+
+  <!-- Trees in park -->
+  <g fill="#4caf50">
+    <ellipse cx="670" cy="260" rx="22" ry="18" fill="#388e3c"/>
+    <rect x="667" y="270" width="6" height="15" fill="#795548"/>
+    <ellipse cx="750" cy="250" rx="20" ry="16" fill="#43a047"/>
+    <rect x="747" y="258" width="6" height="15" fill="#795548"/>
+  </g>
+
+  <!-- Chim -->
+  <text x="685" y="285" text-anchor="middle" fill="#ff9800" font-size="10" font-family="Arial">🐦 Chim (C4)</text>
+
+  <!-- Hotspot marker -->
+  <rect x="510" y="330" width="160" height="28" fill="#ff9800" rx="4" opacity="0.85"/>
+  <text x="590" y="349" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold" font-family="Arial">🟠 HOTSPOT: Picnic Area</text>
+
+  <!-- Rác in park -->
+  <g opacity="0.4">
+    <rect x="555" y="370" width="10" height="6" fill="#90a4ae" rx="1"/>
+    <circle cx="630" cy="372" r="3" fill="#a5d6a7"/>
+    <rect x="700" y="367" width="14" height="6" fill="#ce93d8" rx="1"/>
+  </g>
+
+  <!-- ====== HÀNG 3: Square | RC | Riverside ====== -->
+
+  <!-- QUẢNG TRƯỜNG TRUNG TÂM (left) -->
+  <rect x="0" y="400" width="280" height="200" fill="#eceff1" stroke="#b0bec5" stroke-width="1.5" rx="2"/>
+  <text x="140" y="423" text-anchor="middle" fill="#37474f" font-size="14" font-weight="bold" font-family="Arial">🏛️ QUẢNG TRƯỜNG</text>
+  <text x="140" y="442" text-anchor="middle" fill="#78909c" font-size="9" font-family="Arial">PL ban đầu: 40 | SPAWN POINT</text>
+
+  <!-- Fountain -->
+  <ellipse cx="140" cy="495" rx="35" ry="22" fill="#b3e5fc" stroke="#4fc3f7" stroke-width="1.5"/>
+  <text x="140" y="490" text-anchor="middle" fill="#0277bd" font-size="9" font-family="Arial">⛲ Đài phun</text>
+  <text x="140" y="503" text-anchor="middle" fill="#0277bd" font-size="8" font-family="Arial">(khô → có nước)</text>
+
+  <!-- Bác Xanh -->
+  <rect x="60" y="530" width="150" height="50" fill="#e8f5e9" stroke="#66bb6a" stroke-width="2" rx="4" filter="url(#shadow)"/>
+  <text x="135" y="550" text-anchor="middle" fill="#2e7d32" font-size="12" font-weight="bold" font-family="Arial">🧓 BÁC XANH</text>
+  <text x="135" y="567" text-anchor="middle" fill="#43a047" font-size="9" font-family="Arial">Mentor chính | Ghế đá</text>
+
+  <!-- Spawn marker -->
+  <circle cx="45" cy="420" r="8" fill="#fff" stroke="#1e88e5" stroke-width="2"/>
+  <text x="45" y="423" text-anchor="middle" fill="#1e88e5" font-size="9" font-family="Arial">S</text>
+
+  <!-- ====== TRUNG TÂM TÁI CHẾ (center - V3 change) ====== -->
+  <rect x="280" y="400" width="260" height="200" fill="#e3f2fd" stroke="#42a5f5" stroke-width="2" rx="2"/>
+  <text x="410" y="423" text-anchor="middle" fill="#1565c0" font-size="14" font-weight="bold" font-family="Arial">♻️ TRUNG TÂM TÁI CHẾ</text>
+  <text x="410" y="442" text-anchor="middle" fill="#42a5f5" font-size="9" font-family="Arial">Hub phân loại | Vị trí TRUNG TÂM (v3)</text>
+
+  <!-- Sorting bins -->
+  <rect x="300" y="465" width="45" height="50" fill="#66bb6a" stroke="#43a047" stroke-width="1.5" rx="2"/>
+  <text x="322" y="495" text-anchor="middle" fill="#fff" font-size="8" font-family="Arial">Hữu cơ</text>
+  <rect x="355" y="465" width="45" height="50" fill="#42a5f5" stroke="#1e88e5" stroke-width="1.5" rx="2"/>
+  <text x="377" y="495" text-anchor="middle" fill="#fff" font-size="8" font-family="Arial">Tái chế</text>
+  <rect x="410" y="465" width="45" height="50" fill="#ffa726" stroke="#fb8c00" stroke-width="1.5" rx="2"/>
+  <text x="432" y="495" text-anchor="middle" fill="#fff" font-size="8" font-family="Arial">Vô cơ</text>
+  <rect x="465" y="465" width="45" height="50" fill="#ef5350" stroke="#e53935" stroke-width="1.5" rx="2"/>
+  <text x="487" y="495" text-anchor="middle" fill="#fff" font-size="8" font-family="Arial">Độc hại</text>
+
+  <!-- Chị Lan -->
+  <text x="410" y="545" text-anchor="middle" fill="#1565c0" font-size="10" font-family="Arial">👩‍🔧 Chị Lan (quản lý RC)</text>
+
+  <text x="410" y="565" text-anchor="middle" fill="#90a4ae" font-size="8" font-family="Arial">Sorting UI mở khi vào | Spill effect khi sai</text>
+
+  <!-- ====== BỜ SÔNG (right) ====== -->
+  <rect x="540" y="400" width="460" height="200" fill="#e0f2f1" stroke="#80cbc4" stroke-width="1.5" rx="2"/>
+  <text x="770" y="423" text-anchor="middle" fill="#00695c" font-size="14" font-weight="bold" font-family="Arial">🌊 BỜ SÔNG</text>
+  <text x="770" y="442" text-anchor="middle" fill="#4db6ac" font-size="9" font-family="Arial">PL ban đầu: 50 | Rác nổi từ cống</text>
+
+  <!-- Water -->
+  <rect x="630" y="530" width="370" height="60" fill="url(#riverGrad)" rx="3"/>
+  <text x="815" y="568" text-anchor="middle" fill="#b2dfdb" font-size="11" font-family="Arial">≈ ≈ ≈ SÔNG ≈ ≈ ≈</text>
+
+  <!-- Ông Sáu -->
+  <rect x="560" y="480" width="140" height="50" fill="#fff8e1" stroke="#ffb300" stroke-width="1.5" rx="3" filter="url(#softShadow)"/>
+  <text x="630" y="500" text-anchor="middle" fill="#e65100" font-size="11" font-weight="bold" font-family="Arial">👴 Ông Sáu (Unaware)</text>
+  <text x="630" y="517" text-anchor="middle" fill="#bf360c" font-size="9" font-family="Arial">Ngồi câu cá → "Rác trên bờ..."</text>
+
+  <!-- Fishing rod -->
+  <line x1="700" y1="505" x2="740" y2="545" stroke="#795548" stroke-width="2"/>
+  <line x1="740" y1="545" x2="735" y2="555" stroke="#795548" stroke-width="1"/>
+
+  <!-- Cá -->
+  <text x="780" y="555" text-anchor="middle" fill="#ff9800" font-size="10" font-family="Arial">🐟 Cá (C4)</text>
+
+  <!-- Hotspot marker -->
+  <rect x="780" y="460" width="140" height="24" fill="#ff9800" rx="4" opacity="0.85"/>
+  <text x="850" y="477" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold" font-family="Arial">🟠 HOTSPOT: Riverside</text>
+
+  <!-- ====== CỐNG THOÁT NƯỚC (bottom full-width) ====== -->
+  <rect x="0" y="600" width="1000" height="200" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" rx="2"/>
+  <text x="500" y="625" text-anchor="middle" fill="#e65100" font-size="15" font-weight="bold" font-family="Arial">🚰 CỐNG THOÁT NƯỚC</text>
+  <text x="500" y="644" text-anchor="middle" fill="#ff9800" font-size="10" font-family="Arial">PL ban đầu: 80 (CAO NHẤT) | Cần thông cống (giữ E 3s) | Pollution Spread Event → Sông</text>
+
+  <!-- Drain pipe visual -->
+  <rect x="300" y="670" width="400" height="60" fill="#546e7a" stroke="#37474f" stroke-width="2" rx="4"/>
+  <text x="500" y="708" text-anchor="middle" fill="#cfd8dc" font-size="12" font-family="Arial">CỐNG CHÍNH (bị tắc rác)</text>
+
+  <!-- Rác around drain -->
+  <g opacity="0.5">
+    <rect x="260" y="690" width="15" height="8" fill="#8d6e63" rx="1"/>
+    <rect x="710" y="685" width="12" height="7" fill="#a1887f" rx="1"/>
+    <circle cx="350" cy="680" r="4" fill="#bcaaa4"/>
+    <rect x="620" y="695" width="10" height="6" fill="#90a4ae" rx="1"/>
+  </g>
+
+  <!-- Hotspot marker -->
+  <rect x="370" y="750" width="180" height="28" fill="#e53935" rx="4" opacity="0.85"/>
+  <text x="460" y="769" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold" font-family="Arial">🔴 HOTSPOT: Drainage (ĐỎ)</text>
+
+  <!-- Drainage → River connection (pollution spread) -->
+  <line x1="500" y1="640" x2="815" y2="530" stroke="#ef5350" stroke-width="2" stroke-dasharray="8,4" opacity="0.5"/>
+  <text x="640" y="595" text-anchor="middle" fill="#ef5350" font-size="8" font-family="Arial" transform="rotate(-30, 640, 595)">Pollution Spread</text>
+
+  <!-- ====== ĐƯỜNG ĐI (paths) ====== -->
+  <g fill="none" stroke="#c9a96e" stroke-width="6" opacity="0.6">
+    <!-- SQ → RC -->
+    <line x1="220" y1="450" x2="310" y2="460"/>
+    <!-- RC → Park -->
+    <line x1="440" y1="410" x2="510" y2="350"/>
+    <!-- RC → Residential -->
+    <line x1="330" y1="430" x2="207" y2="330"/>
+    <!-- Residential → Drainage -->
+    <line x1="207" y1="400" x2="400" y2="650"/>
+    <!-- Park → Drainage -->
+    <line x1="707" y1="400" x2="600" y2="650"/>
+    <!-- RC → Riverside -->
+    <line x1="540" y1="480" x2="600" y2="480"/>
+    <!-- Riverside → Drainage -->
+    <line x1="770" y1="600" x2="650" y2="650"/>
+    <!-- SQ → Drainage -->
+    <line x1="140" y1="600" x2="300" y2="670"/>
+  </g>
+  <g fill="none" stroke="#d4b87a" stroke-width="2" opacity="0.4">
+    <!-- Same paths with dash for dirt road effect -->
+    <line x1="220" y1="450" x2="310" y2="460" stroke-dasharray="3,6"/>
+    <line x1="440" y1="410" x2="510" y2="350" stroke-dasharray="3,6"/>
+    <line x1="330" y1="430" x2="207" y2="330" stroke-dasharray="3,6"/>
+    <line x1="207" y1="400" x2="400" y2="650" stroke-dasharray="3,6"/>
+    <line x1="707" y1="400" x2="600" y2="650" stroke-dasharray="3,6"/>
+  </g>
+
+  <!-- ====== SIGNAGE (v3 wayfinding) ====== -->
+  <g>
+    <!-- Sign at SQ→RC -->
+    <rect x="235" y="435" width="8" height="5" fill="#795548" rx="1"/>
+    <!-- Sign at RC→Park -->
+    <rect x="465" y="380" width="8" height="5" fill="#795548" rx="1"/>
+    <!-- Sign at RC→Res -->
+    <rect x="275" y="390" width="8" height="5" fill="#795548" rx="1"/>
+  </g>
+
+  <!-- ====== SOIL COLOR INDICATORS (v3 wayfinding) ====== -->
+  <g opacity="0.3">
+    <rect x="5" y="405" width="12" height="12" fill="#bdbdbd" rx="2" title="Square: gray brick"/>
+    <rect x="285" y="405" width="12" height="12" fill="#a1887f" rx="2" title="RC: brown"/>
+    <rect x="545" y="405" width="12" height="12" fill="#a5d6a7" rx="2" title="Riverside: green"/>
+
+    <text x="5" y="430" fill="#78909c" font-size="7" font-family="Arial">Gạch xám</text>
+    <text x="285" y="430" fill="#795548" font-size="7" font-family="Arial">Đất nâu</text>
+    <text x="545" y="430" fill="#66bb6a" font-size="7" font-family="Arial">Cỏ</text>
+  </g>
+
+  <!-- ====== LEGEND ====== -->
+  <rect x="10" y="620" width="230" height="140" fill="#fff" stroke="#ccc" stroke-width="1.5" rx="4" filter="url(#softShadow)"/>
+  <text x="125" y="640" text-anchor="middle" fill="#333" font-size="11" font-weight="bold" font-family="Arial">CHÚ GIẢI</text>
+
+  <circle cx="30" cy="660" r="5" fill="#4caf50"/><text x="45" y="664" fill="#555" font-size="9" font-family="Arial">🟢 Good Location</text>
+  <circle cx="30" cy="678" r="5" fill="#ff9800"/><text x="45" y="682" fill="#555" font-size="9" font-family="Arial">🟠 Hotspot Trung bình</text>
+  <circle cx="30" cy="696" r="5" fill="#f44336"/><text x="45" y="700" fill="#555" font-size="9" font-family="Arial">🔴 Hotspot Nghiêm trọng</text>
+
+  <circle cx="135" cy="660" r="3" fill="#1e88e5"/><text x="145" y="664" fill="#555" font-size="9" font-family="Arial">NPC</text>
+  <circle cx="135" cy="678" r="3" fill="#ffa726"/><text x="145" y="682" fill="#555" font-size="9" font-family="Arial">Đường đi</text>
+  <text x="135" y="697" fill="#555" font-size="9" font-family="Arial">⛲ Fountain</text>
+
+  <text x="125" y="750" text-anchor="middle" fill="#999" font-size="7" font-family="Arial">GREEN AGAIN v3 — Thị trấn Ven Sông</text>
+
+  <!-- ====== COMPASS ROSE ====== -->
+  <g transform="translate(45, 160)">
+    <circle cx="0" cy="0" r="25" fill="none" stroke="#bdbdbd" stroke-width="1"/>
+    <polygon points="0,-22 4,-8 0,-12 -4,-8" fill="#e53935"/>
+    <text x="0" y="-26" text-anchor="middle" fill="#e53935" font-size="10" font-weight="bold" font-family="Arial">N</text>
+    <line x1="0" y1="-22" x2="0" y2="22" stroke="#999" stroke-width="0.5"/>
+    <line x1="-22" y1="0" x2="22" y2="0" stroke="#999" stroke-width="0.5"/>
+  </g>
+</svg>
