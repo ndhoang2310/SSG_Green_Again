@@ -29,7 +29,7 @@ Removed old wiring sources:
 
 Kept:
 
-- `StarterPlayer.StarterCharacterScripts.SprintStaminaScript`, but with stamina UI removed.
+- `StarterPlayer.StarterCharacterScripts.SprintStaminaScript`, rebuilt as simple Shift sprint with no stamina drain, recovery, cooldown, or sprint time limit.
 
 ## Story And Quest Flow
 
@@ -143,6 +143,15 @@ Updated the MVP UI to be smaller and cleaner:
 - Prompt format changed to `[E]  Action - Object`.
 - Toast and notebook UI made visually consistent with the new HUD.
 - Added responsive scale for smaller screens.
+- Added a lightweight CS0 intro overlay when the player first enters the main map.
+- Added dialogue advance debounce so repeated `E` presses do not skip lines too quickly.
+- Fixed dialogue choices:
+  - Choice buttons no longer appear from the first dialogue line.
+  - Choices appear only on the final dialogue line.
+  - The continue button is hidden while a choice is required.
+  - Clicking a choice inserts it as a player line before the dialogue closes.
+  - Pressing `E` while choices are shown selects the first choice so keyboard play does not get stuck.
+- Post-ending free roam now hides the tracker and removes the objective marker.
 
 ## Stamina / Sprint
 
@@ -150,9 +159,9 @@ Changed `SprintStaminaScript`:
 
 - Removed the visible stamina bar UI.
 - Removed `StaminaGui` creation.
-- Kept sprint logic.
-- Player can still hold Shift to run faster.
-- Walk speed still changes from default speed to sprint speed.
+- Removed stamina drain, stamina recovery, cooldown, and sprint exhaustion logic.
+- Player can hold Left Shift or Right Shift to run faster for as long as Shift is held.
+- Walk speed now toggles directly between default speed `16` and sprint speed `25`.
 
 ## Height And Position Fixes
 
@@ -166,6 +175,65 @@ Validated values during Play:
 
 - Hub marker around `284.24, 51.85, -3570`.
 - Q1 cleanup trash around `Y ~= 52.2`.
+
+## Doc-Driven Patch From Full Build Guide
+
+Applied after `GREEN_AGAIN_V5_FULL_GAME_DOCUMENT_AND_BUILD_GUIDE.md` was created:
+
+- Added `BacXanh_Q1_AfterClean`, a short after-cleanup beat before sending the player to Chị Lan.
+- Changed Q5 community gather to require the three main return visits from Cô Tư, Anh Tùng, and Ông Sáu.
+- Kept Chị Lan's Q5 role in the drain aftermath and ending, without requiring her as the fourth gather target.
+- Sent a `freeRoam` objective payload after ending so `StoryClientMVP` hides tracker/marker cleanly.
+- Extended gameplay positions for TrashSite, Grocery, FieldA, FieldB, River, and Drain so runtime markers/trash/placements use grounded map locations.
+- Objective marker for cleanup and placement quests now follows the current uncollected trash or unplaced action instead of only pointing at the broad area.
+- Added explicit cleanup spawn positions for Ch4 river trash and Ch5 drain trash, so those clusters no longer rely on broad area offsets.
+- Changed cleanup trash from quest-time spawning to ambient pollution:
+  - Trash for all cleanup chapters now appears at game start.
+  - Trash starts as visible but non-interactable environmental pollution.
+  - When the related cleanup quest begins, only that quest's trash becomes interactable.
+  - Collected trash is hidden so the area visibly gets cleaner.
+- Replaced single-block trash visuals with Roblox-native composite trash models:
+  - Trash bag: body lumps + tied top.
+  - Plastic bottle: body + neck + cap.
+  - Metal can: body + top + bottom.
+  - Snack wrapper/paper: sheet + colored edge + label.
+- Added trash category attributes for future sorting gameplay:
+  - `Mixed`
+  - `Plastic`
+  - `Metal`
+  - `Paper`
+- Collected trash now records into the player's runtime bag by category before disappearing.
+- Added lightweight runtime NPC staging:
+  - Bác Xanh can appear near the river during Ông Sáu's story beat.
+  - Bác Xanh and Chị Lan can appear near the drain for the Ch5 drain aftermath.
+  - Bác Xanh, Chị Lan, Cô Tư, Anh Tùng, Ông Sáu, and Bé Na stage around Nhà văn hóa for the ending.
+- Dialogue now hides the objective marker while open and restores it after close if the quest is still active.
+- Added `TouchInteractButton` for touch/mobile interaction while keeping keyboard `E`.
+
+## Gameplay Expansion Patch
+
+Expanded the MVP loop after the user requested deeper gameplay:
+
+- Added sorting quests after cleanup chapters:
+  - `Q1_04_SortFirstTrash`
+  - `Q2_04_SortGroceryTrash`
+  - `Q3_04_SortFieldTrash`
+  - `Q4_03_SortRiverTrash`
+  - `Q5_03_SortDrainTrash`
+- Trash now works as a simple carried bag system:
+  - Collected trash increments the player's runtime bag by category.
+  - Categories are `Plastic`, `Metal`, `Paper`, and `Mixed`.
+  - Sorting quests spawn four runtime bins at the real trash collection point.
+  - Interacting with the correct bin empties that category from the bag.
+  - A sorting quest completes only after the bag is empty.
+- Expanded the final prevention quest:
+  - It now requires 3 actions instead of 2.
+  - Place a trash bin near Cô Tư's grocery.
+  - Place a reminder sign near the football field.
+  - Plant a young tree in the village area beside Nhà văn hóa.
+- Added a simple runtime tree visual:
+  - Before interaction it is a planting marker.
+  - After interaction it becomes a trunk plus green crown.
 
 ## Deleted Legacy Pieces
 
@@ -192,8 +260,28 @@ Play tests performed:
 - Verified old connection text no longer appears.
 - Verified old HUD no longer spawns.
 - Verified stamina UI no longer appears.
-- Verified sprint script still exists and keeps Shift sprint behavior.
+- Verified sprint script now has no stamina/cooldown variables and keeps direct Shift sprint behavior.
 - Verified Q1 marker and trash use corrected ground-level positions.
+- Verified CS0 intro overlay appears after entering the main map.
+- Verified Q1 after-cleanup Bác Xanh dialogue opens before `Q1_04_SortFirstTrash`.
+- Verified free-roam objective payload hides tracker and removes marker.
+- Verified cleanup marker points to runtime trash.
+- Verified route can continue from Q4 through `PostEnding_FreeRoam` after the doc-driven patches.
+- Verified ending staging moves all six main NPCs to ground-level positions around Nhà văn hóa.
+- Updated Ch4 river gameplay/cleanup area to the real main-map river/drain-side coordinates provided by the user:
+  - `(-160.482, 51.689, -3571.701)`
+  - `(-198.184, 51.689, -3502.522)`
+  - `(-204.840, 54.054, -3481.669)`
+- Verified Ch4 river trash spawns at those three positions, with client streaming all three models after teleporting near the river area.
+- Verified 16 ambient trash models exist at game start, with 53 visible child parts and `Interactable=false`.
+- Verified entering Q1 cleanup activates only the 3 Q1 trash objects.
+- Verified collecting Q1 trash hides those objects while other ambient pollution remains visible.
+- Verified collecting a plastic bottle marks only that model collected/invisible, while the nearby bag/can remain visible and interactable.
+- Verified Q1 cleanup now leads into a sorting step at the trash collection point.
+- Verified sorting bins spawn for `Q1_04_SortFirstTrash` and become the active objective marker.
+- Verified sorting `Mixed`, `Plastic`, and `Metal` from the Q1 bag advances to `Q1_05_MeetChiLan`.
+- Verified Cô Tư choice dialogue starts with choices hidden and continue visible.
+- Verified Cô Tư choices appear only on the final line, with continue hidden while waiting for a choice.
+- Verified the updated scripts start in Play mode without new `StoryRuntimeMVP` or `StoryClientMVP` errors.
 
 Known unrelated console noise from imported assets remained, including texture permission and existing asset script warnings. These were not introduced by the MVP story scripts.
-
