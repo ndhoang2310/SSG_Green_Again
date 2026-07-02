@@ -96,11 +96,10 @@ Ending message:
 
 ## 9. Required Companion Docs
 
-- `GDD_GreenAgain_v5_STORY_FRAMEWORK.md`: khung cảm xúc và chương.
+- `README.md`: hướng dẫn dùng tài liệu nào khi nào.
 - `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md`: map theo cụm địa điểm thật.
 - `GDD_GreenAgain_v5_STORY_BIBLE.md`: lore, tone, nhân vật, arc.
 - `GDD_GreenAgain_v5_CUTSCENE_SCRIPT.md`: cutscene và staging từng chương.
 - `GDD_GreenAgain_NPC_DIALOGUE_v5.md`: thoại NPC và ambient lines.
 - `GDD_GreenAgain_v5_QUEST_FLOW.md`: quest IDs, trigger, marker, state.
-- `GDD_GreenAgain_v5_IMPLEMENTATION_BLUEPRINT.md`: checklist build Roblox.
-
+- `GDD_GreenAgain_v5_IMPLEMENTATION_PLAN.md`: plan implement chi tiết theo milestone.
