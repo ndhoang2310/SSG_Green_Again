@@ -160,7 +160,7 @@ Observed in Roblox Studio on 2026-07-03:
 - `StarterGui.MainMenuGui.MainMenuController` now exists and appears to be the team's current waiting screen / main menu work.
 - This is separate from the story HUD in `StoryClientMVP`.
 - Current behavior from the script:
-  - Locks player controls while in menu.
+  - Holds the player in place during menu by anchoring the character at the menu scene, while leaving PlayerModule input state alive.
   - Uses a scriptable camera at roughly `(-249.381, 49.143, -3296.098)`.
   - Creates runtime `Workspace.MainMenuAssets`.
   - Adds a 2D logo image with asset id `rbxassetid://112991523200169`.
@@ -174,7 +174,8 @@ Observed in Roblox Studio on 2026-07-03:
   - The old PLAY transition could unanchor the character near the menu scene, causing the player to fall and die before respawning.
   - `MainMenuController` now resolves `Workspace["=== GREEN AGAIN V5 ==="].MAP_ROUTE.00_Spawn_And_Teleport.SpawnLocation` and pivots the character to that safe spawn plus a small Y offset before physics resumes.
   - Character velocity is reset during the transition to avoid carried falling momentum.
-  - After PLAY, `MainMenuController` force-resets PlayerModule controls with a `Disable()`/`Enable()` cycle, then briefly keeps humanoid/camera/player controls restored before destroying the menu GUI. The keep-alive pass no longer clears character velocity continuously, so strafing, walking backward, stopping, and jumping are not suppressed after the fade.
+  - `MainMenuController` no longer disables/re-enables PlayerModule controls while the menu is open. The character is held in place by anchoring, while PlayerModule keeps receiving normal key up/down events. This avoids stale WASD/jump states after PLAY.
+  - On PLAY, the script only clears any pending ClickToMove path from the 3D PLAY click, then unanchors the character and restores the camera/humanoid. Do not force `DevComputerMovementMode` or add delayed control resets; both can make movement lock or drift.
 - Story UI gating:
   - `StoryClientMVP` treats `MainMenuGui` as an active menu guard only while the GUI is still enabled.
   - While enabled `MainMenuGui` exists, quest tracker, prompt, touch button, dialogue panel, notebook toast, and objective marker are forced hidden.
@@ -194,6 +195,7 @@ Changed `SprintStaminaScript`:
 - Removed stamina drain, stamina recovery, cooldown, and sprint exhaustion logic.
 - Player can hold Left Shift or Right Shift to run faster for as long as Shift is held.
 - Walk speed now toggles directly between default speed `16` and sprint speed `25`.
+- Sprint is event-based: it changes speed only on Shift press/release, not every Heartbeat.
 
 ## Height And Position Fixes
 
@@ -279,6 +281,21 @@ The current active MVP path is:
 
 - Server: `StoryRuntimeMVP`
 - Client: `StoryClientMVP`
+
+## Performance Fixes
+
+- Fixed a major client-side CPU issue in `StoryClientMVP`.
+- Cause:
+  - `findNearbyTarget()` previously called `workspace:GetDescendants()` every Heartbeat while normal gameplay was active.
+  - When dialogue opened, `StoryClientMVP` returned early before that scan, which is why CPU dropped and lag stopped during conversations.
+- Current behavior:
+  - Interactable objects are cached by `InteractId`.
+  - The cache is built once, updated from `workspace.DescendantAdded/DescendantRemoving`, and refreshed only occasionally as a fallback.
+  - Nearby interaction checks are throttled to about 5-6 times per second instead of 60 times per second.
+  - Prompt UI text/visibility is only updated when the target or text actually changes.
+  - Old duplicate HUD cleanup now runs once instead of every Heartbeat.
+- `SprintStaminaScript` no longer writes `Humanoid.WalkSpeed` every Heartbeat. Shift sprint is now event-based: speed changes only when Shift is pressed or released.
+- Team rule: do not add `workspace:GetDescendants()`, large descendant scans, or repeated UI property writes inside `Heartbeat`/`RenderStepped` without caching and throttling.
 
 ## Test Results
 

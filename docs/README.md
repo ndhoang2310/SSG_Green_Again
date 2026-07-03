@@ -20,32 +20,37 @@ V5 là hướng hiện tại của project. Khi build gameplay/story mới, ưu 
    - Chứa runtime active, UI đã thay, quest flow đã implement, vị trí đã chỉnh, gameplay đã mở rộng, test đã chạy và known console noise.
    - Sau mỗi thay đổi gameplay/code đáng kể, cập nhật file này.
 
-4. `GDD_GreenAgain_v5.md`
+4. `GREEN_AGAIN_V5_ROBLOX_CODE_STRUCTURE.md`
+   - Dùng để hiểu toàn bộ cấu trúc code hiện có trong Roblox Studio.
+   - Chứa inventory script active, RemoteEvents, Attribute contract, runtime folders, server/client ownership và quy trình thêm quest/gameplay.
+   - Đọc file này trước khi tạo script mới hoặc sửa `StoryRuntimeMVP` / `StoryClientMVP`.
+
+5. `GDD_GreenAgain_v5.md`
    - Dùng khi cần hiểu tổng quan game v5, pillars, main route, chapter overview và ending.
    - Đây là cửa vào chính.
 
-5. `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md`
+6. `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md`
    - Dùng khi cần hiểu map hiện tại theo cụm địa điểm.
    - Source chính cho route: Nhà văn hóa -> Tạp hóa -> Sân bóng -> Ông Sáu/bờ sông -> Cống -> Nhà văn hóa.
    - Dùng để kiểm tra tên kỹ thuật cũ như `PicnicArea`, `Dam_C1/C2/C3`, `Portal1Destination` nên hiển thị thế nào trong story.
 
-6. `GDD_GreenAgain_v5_STORY_BIBLE.md`
+7. `GDD_GreenAgain_v5_STORY_BIBLE.md`
    - Dùng khi viết/cải thiện story, tone, arc nhân vật, theme.
    - Không dùng để lấy quest IDs hoặc implementation details.
 
-7. `GDD_GreenAgain_NPC_DIALOGUE_v5.md`
+8. `GDD_GreenAgain_NPC_DIALOGUE_v5.md`
    - Dùng khi viết thoại NPC, dialogue state, hội thoại chính/phụ.
    - Đây là source chính cho nội dung trò chuyện.
 
-8. `GDD_GreenAgain_v5_CUTSCENE_SCRIPT.md`
+9. `GDD_GreenAgain_v5_CUTSCENE_SCRIPT.md`
    - Dùng khi build cutscene/staging/camera/trigger.
    - Nếu thoại trong cutscene lệch với dialogue doc, ưu tiên dialogue doc rồi cập nhật cutscene cho khớp.
 
-9. `GDD_GreenAgain_v5_QUEST_FLOW.md`
+10. `GDD_GreenAgain_v5_QUEST_FLOW.md`
    - Dùng khi build quest chain, objective text, trigger, next quest, notebook entry.
    - Đây là source chính cho `QuestId`.
 
-10. `GDD_GreenAgain_v5_IMPLEMENTATION_PLAN.md`
+11. `GDD_GreenAgain_v5_IMPLEMENTATION_PLAN.md`
    - Dùng khi code trong Roblox Studio.
    - Đây là source chính cho milestone, module, build order, QA.
 
@@ -72,6 +77,7 @@ Lưu ý phối hợp:
 - `MainMenuGui` / `MainMenuController` đang là phần màn hình chờ do thành viên khác trong nhóm làm.
 - Agent khác không tự ý thay thế hoặc refactor màn hình chờ nếu chưa được giao.
 - Story HUD vẫn nằm trong `StoryClientMVP`; không trộn logic menu vào story HUD.
+- Performance hiện tại phụ thuộc vào việc `StoryClientMVP` cache interactables; không thêm lại scan toàn `workspace:GetDescendants()` trong `Heartbeat`.
 
 ## 3. Current V5 Document Inventory
 
@@ -85,6 +91,9 @@ Các file V5 hiện có trong `docs/`:
 
 - `GREEN_AGAIN_V5_MVP_IMPLEMENTATION_SUMMARY.md`
   - Tóm tắt trạng thái build thật hiện tại trong Roblox Studio.
+
+- `GREEN_AGAIN_V5_ROBLOX_CODE_STRUCTURE.md`
+  - Cấu trúc code Roblox V5: active scripts, RemoteEvents, Attributes, runtime folders, server/client ownership và quy trình thêm code.
 
 - `GDD_GreenAgain_v5.md`
   - GDD tổng quan V5.
@@ -139,9 +148,11 @@ Các doc v5 sau đã được bỏ vì trùng vai trò:
 - Nếu chuẩn bị sửa game/code/Studio: đọc `AGENT_COLLABORATION_RULES_GREEN_AGAIN_V5.md` trước.
 - Nếu cần hiểu toàn bộ game và build guide: đọc `GREEN_AGAIN_V5_FULL_GAME_DOCUMENT_AND_BUILD_GUIDE.md`.
 - Nếu cần biết Studio hiện đã build gì: đọc `GREEN_AGAIN_V5_MVP_IMPLEMENTATION_SUMMARY.md`.
+- Nếu chuẩn bị tạo/sửa code trong Roblox: đọc `GREEN_AGAIN_V5_ROBLOX_CODE_STRUCTURE.md` và viết plan logic/cấu trúc trước khi code.
 - Nếu sửa runtime hiện tại: ưu tiên cập nhật trong `StoryRuntimeMVP` hoặc `StoryClientMVP`, không tạo script song song nếu không cần.
 - Nếu thay đổi behavior đã implement: cập nhật `GREEN_AGAIN_V5_MVP_IMPLEMENTATION_SUMMARY.md`.
 - Nếu thay đổi luật phối hợp agent: cập nhật `AGENT_COLLABORATION_RULES_GREEN_AGAIN_V5.md`.
+- Nếu thay đổi interaction scan, prompt UI, movement/menu, sprint hoặc performance loop: cập nhật cả `GREEN_AGAIN_V5_ROBLOX_CODE_STRUCTURE.md`.
 
 - Nếu sửa route/map: sửa `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md` trước.
 - Nếu sửa cốt truyện/nhân vật: sửa `GDD_GreenAgain_v5_STORY_BIBLE.md`.
@@ -160,3 +171,5 @@ Các doc v5 sau đã được bỏ vì trùng vai trò:
 - Nếu map thật khác docs, sửa map draft trước rồi mới code.
 - Không reintroduce UI cũ, marker nhiều điểm, hoặc marker có distance.
 - Không tạo placeholder sân bóng/cống vì map hiện đã có object thật.
+- Không dùng `workspace:GetDescendants()` hoặc scan lớn trong `Heartbeat`/`RenderStepped` nếu chưa cache/throttle rõ ràng.
+- Không set UI text/visibility hoặc `Humanoid.WalkSpeed` mỗi frame nếu giá trị không đổi.
