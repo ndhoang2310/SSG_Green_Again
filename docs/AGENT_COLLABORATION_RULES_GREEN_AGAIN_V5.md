@@ -27,6 +27,7 @@ The current active MVP path is:
 - Server: `game.ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP`
 - Client: `game.StarterPlayer.StarterPlayerScripts.StoryClientMVP`
 - Sprint: `game.StarterPlayer.StarterCharacterScripts.SprintStaminaScript`
+- Team-owned waiting screen / main menu: `game.StarterGui.MainMenuGui.MainMenuController`
 
 Deleted or obsolete systems must not be recreated:
 
@@ -36,6 +37,13 @@ Deleted or obsolete systems must not be recreated:
 - Old connection label text: `Đang nối map Green Again V5...`
 
 Before adding a new script, first check whether the behavior belongs in the existing active MVP scripts.
+
+Main menu ownership rule:
+
+- `MainMenuGui` / `MainMenuController` is currently being worked on by another team member.
+- Do not rewrite, delete, or visually redesign it unless the user explicitly assigns that task.
+- Story HUD and objective marker work should remain in `StoryClientMVP` and should not assume the menu has already been destroyed.
+- If touching startup flow, verify that the menu still locks controls, restores controls after PLAY, and does not reintroduce duplicate HUD.
 
 ## 3. Multi-Agent Safety Rules
 

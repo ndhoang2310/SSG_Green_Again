@@ -58,6 +58,7 @@ Active runtime:
 - Server: `game.ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP`
 - Client: `game.StarterPlayer.StarterPlayerScripts.StoryClientMVP`
 - Sprint: `game.StarterPlayer.StarterCharacterScripts.SprintStaminaScript`
+- Team-owned waiting screen / main menu: `game.StarterGui.MainMenuGui.MainMenuController`
 
 Không tạo lại các hệ cũ:
 
@@ -65,6 +66,12 @@ Không tạo lại các hệ cũ:
 - `StarterPlayer.StarterPlayerScripts.GreenAgainObjectiveClient`
 - `ServerScriptService.GreenAgainProject.Runtime_To_Add.MapWiringBootstrap`
 - Text UI cũ: `Đang nối map Green Again V5...`
+
+Lưu ý phối hợp:
+
+- `MainMenuGui` / `MainMenuController` đang là phần màn hình chờ do thành viên khác trong nhóm làm.
+- Agent khác không tự ý thay thế hoặc refactor màn hình chờ nếu chưa được giao.
+- Story HUD vẫn nằm trong `StoryClientMVP`; không trộn logic menu vào story HUD.
 
 ## 3. Current V5 Document Inventory
 

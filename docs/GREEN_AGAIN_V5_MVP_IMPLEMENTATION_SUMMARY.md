@@ -150,8 +150,39 @@ Updated the MVP UI to be smaller and cleaner:
   - Choices appear only on the final dialogue line.
   - The continue button is hidden while a choice is required.
   - Clicking a choice inserts it as a player line before the dialogue closes.
-  - Pressing `E` while choices are shown selects the first choice so keyboard play does not get stuck.
+- Pressing `E` while choices are shown selects the first choice so keyboard play does not get stuck.
 - Post-ending free roam now hides the tracker and removes the objective marker.
+
+## Main Menu / Waiting Screen
+
+Observed in Roblox Studio on 2026-07-03:
+
+- `StarterGui.MainMenuGui.MainMenuController` now exists and appears to be the team's current waiting screen / main menu work.
+- This is separate from the story HUD in `StoryClientMVP`.
+- Current behavior from the script:
+  - Locks player controls while in menu.
+  - Uses a scriptable camera at roughly `(-249.381, 49.143, -3296.098)`.
+  - Creates runtime `Workspace.MainMenuAssets`.
+  - Adds a 2D logo image with asset id `rbxassetid://112991523200169`.
+  - Animates floating menu models such as `Noob` and `honda cub` if present.
+  - Spawns decorative water droplets and leaves.
+  - Creates 3D `PLAY` and `SETTING` buttons with `ClickDetector`.
+  - Uses a separate `TransitionOverlay` ScreenGui for fade in/out when pressing PLAY.
+  - On PLAY, moves the character to the real waiting-island `SpawnLocation` before unanchoring/restoring physics.
+  - Destroys `MainMenuGui` and `MainMenuAssets` after PLAY, restores controls, and returns camera to custom mode.
+- Bug fix:
+  - The old PLAY transition could unanchor the character near the menu scene, causing the player to fall and die before respawning.
+  - `MainMenuController` now resolves `Workspace["=== GREEN AGAIN V5 ==="].MAP_ROUTE.00_Spawn_And_Teleport.SpawnLocation` and pivots the character to that safe spawn plus a small Y offset before physics resumes.
+  - Character velocity is reset during the transition to avoid carried falling momentum.
+- Story UI gating:
+  - `StoryClientMVP` now treats `MainMenuGui` as an active menu guard.
+  - While `MainMenuGui` exists, quest tracker, prompt, touch button, dialogue panel, notebook toast, and objective marker are forced hidden.
+  - After PLAY, the story UI still stays hidden on the waiting island.
+  - Quest tracker and objective marker appear only after the player reaches the main island activation zone.
+- Ownership note:
+  - Treat this menu as teammate-owned work.
+  - Other agents should not replace or refactor `MainMenuGui` / `MainMenuController` unless explicitly asked.
+  - Any story HUD changes should remain in `StoryClientMVP` and avoid interfering with the menu flow.
 
 ## Stamina / Sprint
 
@@ -283,5 +314,17 @@ Play tests performed:
 - Verified Cô Tư choice dialogue starts with choices hidden and continue visible.
 - Verified Cô Tư choices appear only on the final line, with continue hidden while waiting for a choice.
 - Verified the updated scripts start in Play mode without new `StoryRuntimeMVP` or `StoryClientMVP` errors.
+- Verified while `MainMenuGui` exists:
+  - `QuestTracker.Visible=false`
+  - `InteractionPrompt.Visible=false`
+  - `TouchInteractButton.Visible=false`
+  - no local objective marker anchors are present.
+- Verified the player remains alive at the waiting-island spawn after the menu safety fix:
+  - health `100`
+  - position near `(34.236, 17.351, -95.290)`
+  - quest tracker still hidden.
+- Simulated post-PLAY flow:
+  - after `MainMenuGui` is removed, waiting island still has quest tracker hidden and no objective marker.
+  - after moving to main island, quest tracker becomes visible and one `CurrentStoryObjectiveAnchor` marker is created.
 
 Known unrelated console noise from imported assets remained, including texture permission and existing asset script warnings. These were not introduced by the MVP story scripts.
