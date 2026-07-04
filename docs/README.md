@@ -25,32 +25,37 @@ V5 là hướng hiện tại của project. Khi build gameplay/story mới, ưu 
    - Chứa inventory script active, RemoteEvents, Attribute contract, runtime folders, server/client ownership và quy trình thêm quest/gameplay.
    - Đọc file này trước khi tạo script mới hoặc sửa `StoryRuntimeMVP` / `StoryClientMVP`.
 
-5. `GDD_GreenAgain_v5.md`
+5. `GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md`
+   - Dùng khi cần hiểu hoặc sử dụng các model rác trong `game.Workspace.Trash`.
+   - Chứa cấu trúc thư viện rác, categories, attributes template, cách clone sang runtime, và quy tắc không bật interaction trên source asset.
+   - Đọc file này trước khi thay runtime trash visuals, sorting props, hoặc thêm model rác mới.
+
+6. `GDD_GreenAgain_v5.md`
    - Dùng khi cần hiểu tổng quan game v5, pillars, main route, chapter overview và ending.
    - Đây là cửa vào chính.
 
-6. `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md`
+7. `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md`
    - Dùng khi cần hiểu map hiện tại theo cụm địa điểm.
    - Source chính cho route: Nhà văn hóa -> Tạp hóa -> Sân bóng -> Ông Sáu/bờ sông -> Cống -> Nhà văn hóa.
    - Dùng để kiểm tra tên kỹ thuật cũ như `PicnicArea`, `Dam_C1/C2/C3`, `Portal1Destination` nên hiển thị thế nào trong story.
 
-7. `GDD_GreenAgain_v5_STORY_BIBLE.md`
+8. `GDD_GreenAgain_v5_STORY_BIBLE.md`
    - Dùng khi viết/cải thiện story, tone, arc nhân vật, theme.
    - Không dùng để lấy quest IDs hoặc implementation details.
 
-8. `GDD_GreenAgain_NPC_DIALOGUE_v5.md`
+9. `GDD_GreenAgain_NPC_DIALOGUE_v5.md`
    - Dùng khi viết thoại NPC, dialogue state, hội thoại chính/phụ.
    - Đây là source chính cho nội dung trò chuyện.
 
-9. `GDD_GreenAgain_v5_CUTSCENE_SCRIPT.md`
+10. `GDD_GreenAgain_v5_CUTSCENE_SCRIPT.md`
    - Dùng khi build cutscene/staging/camera/trigger.
    - Nếu thoại trong cutscene lệch với dialogue doc, ưu tiên dialogue doc rồi cập nhật cutscene cho khớp.
 
-10. `GDD_GreenAgain_v5_QUEST_FLOW.md`
+11. `GDD_GreenAgain_v5_QUEST_FLOW.md`
    - Dùng khi build quest chain, objective text, trigger, next quest, notebook entry.
    - Đây là source chính cho `QuestId`.
 
-11. `GDD_GreenAgain_v5_IMPLEMENTATION_PLAN.md`
+12. `GDD_GreenAgain_v5_IMPLEMENTATION_PLAN.md`
    - Dùng khi code trong Roblox Studio.
    - Đây là source chính cho milestone, module, build order, QA.
 
@@ -60,6 +65,7 @@ MVP hiện tại đang nằm chủ yếu trong Roblox Studio, không phải mộ
 
 Active runtime:
 
+- Startup loader: `game.ReplicatedFirst.GreenAgainStartupLoader`
 - Server: `game.ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP`
 - Client: `game.StarterPlayer.StarterPlayerScripts.StoryClientMVP`
 - Sprint: `game.StarterPlayer.StarterCharacterScripts.SprintStaminaScript`
@@ -76,8 +82,11 @@ Lưu ý phối hợp:
 
 - `MainMenuGui` / `MainMenuController` đang là phần màn hình chờ do thành viên khác trong nhóm làm.
 - Agent khác không tự ý thay thế hoặc refactor màn hình chờ nếu chưa được giao.
+- `GreenAgainStartupLoader` là lớp loading sớm ở `ReplicatedFirst`; giữ riêng khỏi `MainMenuController` để chờ menu render xong trước khi fade.
 - Story HUD vẫn nằm trong `StoryClientMVP`; không trộn logic menu vào story HUD.
 - Performance hiện tại phụ thuộc vào việc `StoryClientMVP` cache interactables; không thêm lại scan toàn `workspace:GetDescendants()` trong `Heartbeat`.
+- Trash asset library hiện nằm ở `game.Workspace.Trash`; đây là source template/scene dressing, không phải runtime quest folder. Runtime props vẫn spawn dưới `Workspace.GreenAgainV5_StoryRuntime`.
+- Sorting quest hiện dùng mini game kéo-thả trong `StoryClientMVP`; item kéo-thả là visual card render model rác 3D từ `Workspace.Trash` bằng `ViewportFrame`, server `StoryRuntimeMVP` validate từng item qua `OnSortingMinigameSubmit`. Không quay lại kiểu auto-sort khi bấm trực tiếp từng thùng.
 
 ## 3. Current V5 Document Inventory
 
@@ -94,6 +103,9 @@ Các file V5 hiện có trong `docs/`:
 
 - `GREEN_AGAIN_V5_ROBLOX_CODE_STRUCTURE.md`
   - Cấu trúc code Roblox V5: active scripts, RemoteEvents, Attributes, runtime folders, server/client ownership và quy trình thêm code.
+
+- `GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md`
+  - Cấu trúc `Workspace.Trash`: asset categories, template attributes, runtime clone rules, disabled imported scripts và checklist thêm model rác.
 
 - `GDD_GreenAgain_v5.md`
   - GDD tổng quan V5.
@@ -153,6 +165,7 @@ Các doc v5 sau đã được bỏ vì trùng vai trò:
 - Nếu thay đổi behavior đã implement: cập nhật `GREEN_AGAIN_V5_MVP_IMPLEMENTATION_SUMMARY.md`.
 - Nếu thay đổi luật phối hợp agent: cập nhật `AGENT_COLLABORATION_RULES_GREEN_AGAIN_V5.md`.
 - Nếu thay đổi interaction scan, prompt UI, movement/menu, sprint hoặc performance loop: cập nhật cả `GREEN_AGAIN_V5_ROBLOX_CODE_STRUCTURE.md`.
+- Nếu thêm/sửa model rác trong `Workspace.Trash`: cập nhật `GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md`; nếu runtime sử dụng asset đó thay đổi behavior, cập nhật thêm `GREEN_AGAIN_V5_MVP_IMPLEMENTATION_SUMMARY.md`.
 
 - Nếu sửa route/map: sửa `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md` trước.
 - Nếu sửa cốt truyện/nhân vật: sửa `GDD_GreenAgain_v5_STORY_BIBLE.md`.
@@ -171,5 +184,6 @@ Các doc v5 sau đã được bỏ vì trùng vai trò:
 - Nếu map thật khác docs, sửa map draft trước rồi mới code.
 - Không reintroduce UI cũ, marker nhiều điểm, hoặc marker có distance.
 - Không tạo placeholder sân bóng/cống vì map hiện đã có object thật.
+- Không bật `Interactable=true` trực tiếp trên source template trong `Workspace.Trash`; clone sang runtime folder rồi mới enable theo quest.
 - Không dùng `workspace:GetDescendants()` hoặc scan lớn trong `Heartbeat`/`RenderStepped` nếu chưa cache/throttle rõ ràng.
 - Không set UI text/visibility hoặc `Humanoid.WalkSpeed` mỗi frame nếu giá trị không đổi.

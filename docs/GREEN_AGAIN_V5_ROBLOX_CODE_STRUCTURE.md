@@ -41,6 +41,9 @@ ServerScriptService
     +-- Existing_Environment_Systems
         +-- DayNightCycle         -- lighting setup
 
+ReplicatedFirst
++-- GreenAgainStartupLoader     -- startup brand loader before waiting screen is ready
+
 StarterPlayer
 +-- StarterPlayerScripts
 |   +-- StoryClientMVP            -- client story HUD, marker, dialogue UI, input E
@@ -66,6 +69,7 @@ ReplicatedStorage
 
 Workspace
 +-- === GREEN AGAIN V5 ===        -- main map root
++-- Trash                         -- source asset library for trash templates and scene dressing
 +-- GreenAgainV5_ClientAnchors    -- server-created marker anchor parts
 +-- GreenAgainV5_StoryRuntime     -- runtime props folder when spawned
 +-- GreenAgainV5_LocalObjectiveAnchors -- local client marker anchors while playing
@@ -85,6 +89,7 @@ Design principle:
 |---|---|---|---|---|
 | Server story | `game.ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP` | `Script` | Green Again V5 MVP | Quest, dialogue data, interaction routing, runtime trash/bin/placement, NPC staging, player story state |
 | Client story | `game.StarterPlayer.StarterPlayerScripts.StoryClientMVP` | `LocalScript` | Green Again V5 MVP | HUD, marker, dialogue panel, choice buttons, interaction prompt, notebook/end overlay |
+| Startup loader | `game.ReplicatedFirst.GreenAgainStartupLoader` | `LocalScript` | Startup presentation | Logo loading screen before `MainMenuGui`/`MainMenuAssets` finish rendering |
 | Sprint | `game.StarterPlayer.StarterCharacterScripts.SprintStaminaScript` | `LocalScript` | Movement utility | Shift sprint speed only; do not restore old stamina bar |
 | Main menu | `game.StarterGui.MainMenuGui.MainMenuController` | `LocalScript` | Team-owned waiting screen | Only touch if user explicitly assigns menu/startup flow |
 | Teleport server | `Workspace["=== GREEN AGAIN V5 ==="].MAP_ROUTE.00_Spawn_And_Teleport.TeleportSystem_Active.TeleportMasterScript` | `Script` | Map transition utility | Portal touched -> fade -> move character to destination |
@@ -135,7 +140,9 @@ Primary responsibility:
 | `ORDER` | Thu tu quest states |
 | `NOTEBOOK` | Noi dung so tay theo chapter |
 | `DIALOGUES` | Dialogue id -> lines, choices, completeQuest, ending |
-| `SORTING_CATEGORIES` | Plastic/Metal/Paper/Mixed bins |
+| `SORTING_BINS` | Four minigame bins: Hazardous/Recycle/Organic/Mixed |
+| `SORTING_CATEGORY_TO_BIN` | Runtime trash category -> correct minigame bin |
+| `SORTING_ITEM_NAMES` | Runtime trash category -> display name in sorting minigame |
 
 ### 4.2 Quest Model
 
@@ -177,6 +184,7 @@ playerState[player]
 +-- community[npcId]
 +-- notebooks[chapterId]
 +-- bag[TrashCategory]
++-- bagItems[] = { id, category, name, templatePath }
 +-- endingShown
 ```
 
@@ -201,8 +209,24 @@ game.ReplicatedStorage.GreenAgainProject.Events_To_Add
 | `OnFeedbackToast` | Server -> Client | text | Toast nho |
 | `OnNotebookEntry` | Server -> Client | `{ chapter, text }` | So tay chapter |
 | `OnEndText` | Server -> Client | text | Overlay ket thuc/post-ending |
+| `OnSortingMinigameOpen` | Server -> Client | sorting payload or `{ close = true }` | Mo/dong UI keo-tha phan loai rac |
+| `OnSortingMinigameSubmit` | Client -> Server | `itemCategory`, `binId` | Submit mot mon rac vao thung; server validate dung/sai |
 
 `OnInteractionPrompt` dang ton tai trong ReplicatedStorage nhung khong phai event chinh cua `StoryClientMVP` hien tai.
+
+Sorting payload item shape:
+
+```lua
+{
+    id = "Q1_03_CleanEntrance_2",
+    category = "Plastic",
+    name = "Chai nhua",
+    templatePath = "Collectibles/Plastic/PlasticBottle_03",
+    correctBin = "Recycle",
+}
+```
+
+`templatePath` is resolved by `StoryClientMVP` under `Workspace.Trash` and rendered inside a `ViewportFrame` for the draggable card. Keep it slash-separated and relative to the `Workspace.Trash` root.
 
 ### 4.5 Attribute Contract
 
@@ -238,6 +262,7 @@ Attributes dung chung:
 | `Sorted` | `true/false` | Sorting bin state |
 | `Placed` | `true/false` | Placement state |
 | `PlacementVisual` | `Tree`, `Flat` | Placement visual transform |
+| `GreenAgainAssetRole` | `Template`, `RuntimeClone`, `ScenePlacement` | Distinguish source assets in `Workspace.Trash` from live quest props |
 
 Khi them gameplay moi, uu tien mo rong contract nay thay vi tao mot he detect rieng.
 
@@ -365,7 +390,64 @@ Rules:
 - Khong set UI text/visible moi frame neu gia tri khong doi.
 - Neu can scan lon, cache truoc roi throttle hoac update bang event.
 
+### 5.5 Field Center Anchor
+
+Chapter 3 khong con phu thuoc vao holder/marker khung thanh de tuong tac.
+
+Runtime data:
+
+- `LOCATION_GAMEPLAY_POSITIONS.FieldCenter = Vector3.new(-59.66, 55.45, -3309.73)`
+- `Q3_01_ToFootballField.targetId = "FieldCenter"`
+- `Q3_03_CleanField.targetId = "FieldCenter"`
+- `Q3_06_FieldReminder.targetId = "FieldCenter"`
+
+`getLocation(locationId)` co fallback tao invisible `Part` trong `Workspace.GreenAgainV5_ClientAnchors` neu location co gameplay position nhung khong co object map that. Voi `FieldCenter`, part nay la interaction anchor o trung tam san bong:
+
+```text
+Workspace.GreenAgainV5_ClientAnchors.Location_FieldCenter
+```
+
+Rules:
+
+- Anchor nay khong phai placeholder visual cho san bong; no chi dung de marker/prompt/interact route.
+- Khong dua Q3 interaction ve `KhungThanh_01_Marker` / `KhungThanh_02_Marker` neu holder khung thanh khong con on dinh.
+- Neu user do lai tam san chinh xac hon, chi cap nhat `LOCATION_GAMEPLAY_POSITIONS.FieldCenter` va docs lien quan.
+
 ## 6. Main Menu: MainMenuController
+
+### 6.0 Startup Loader
+
+Path:
+
+```text
+game.ReplicatedFirst.GreenAgainStartupLoader
+```
+
+Purpose:
+
+- Replaces the default Roblox loading screen with a Green Again branded loader.
+- Shows logo asset `rbxassetid://112991523200169` on a dark green background.
+- Waits until the waiting screen has built its first usable state:
+  - `PlayerGui.MainMenuGui` exists and is enabled.
+  - `MainMenuGui.LogoImage` exists.
+  - `Workspace.MainMenuAssets.PlayBtn` exists.
+  - `Workspace.MainMenuAssets.SetBtn` exists.
+  - `workspace.CurrentCamera` exists.
+- Holds for at least `MIN_VISIBLE_TIME` so the player sees a stable logo, then fades out.
+
+QA attributes written on `PlayerGui`:
+
+```text
+GreenAgainStartupLoaderShown
+GreenAgainStartupLoaderReady
+GreenAgainStartupLoaderTimedOut
+GreenAgainStartupLoaderDuration
+GreenAgainStartupLoaderClosed
+```
+
+Rule:
+
+- Keep this as a separate `ReplicatedFirst` guard layer. Do not fold it into `MainMenuController` unless the menu owner explicitly takes over startup presentation.
 
 Path:
 
@@ -578,6 +660,7 @@ Story-critical map objects:
 | `Grocery` | `TapHoaCoTu_HouseOnly_Rural` | Tap hoa Co Tu |
 | `FieldA` | `KhungThanh_01_Marker` | San bong thon Ven Song |
 | `FieldB` | `KhungThanh_02_Marker` | San bong thon Ven Song |
+| `FieldCenter` | runtime invisible anchor `Location_FieldCenter` | Trung tam san bong dung cho Chapter 3 interaction |
 | `River` | `NPC_OngSau_Marker` | Bo song cho Ong Sau |
 | `DrainMarker` | `OngNuoc_XaThai_Marker` | Cong thoat nuoc cuoi xom marker |
 | `Drain` | `SYSTEMS_REVIEW.Doors_Vehicles_And_AssetScripts.OngThoatNuoc` | Cong thoat nuoc cuoi xom |
@@ -603,13 +686,94 @@ Runtime-created folders:
 | `Workspace.GreenAgainV5_LocalObjectiveAnchors` | Client runtime | Local objective marker anchor |
 | `Workspace.MainMenuAssets` | Main menu client | Menu-only 3D buttons, droplets/leaves |
 
-## 11. Imported Asset Scripts
+Asset library folders:
+
+| Folder | Owner | Muc dich |
+|---|---|---|
+| `Workspace.Trash` | Green Again V5 asset library | Source templates for trash collectibles, sorting/bin props, piles, large debris, and preserved scene dressing |
+
+## 11. Trash Asset Library
+
+Detailed source doc:
+
+```text
+docs/GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md
+```
+
+Current root:
+
+```text
+Workspace.Trash
++-- Collectibles
+|   +-- Plastic
+|   +-- Metal
+|   +-- PaperCardboard
+|   +-- Mixed
+|   +-- Organic
+|   +-- Hazardous
++-- Props
+|   +-- Bins
+|   +-- Piles
+|   +-- LargeDebris
++-- ScenePlacements
++-- _Unsorted
++-- README_TrashLibrary
+```
+
+Role:
+
+- `Workspace.Trash` is a source asset library, not the active quest runtime folder.
+- Live quest trash should still be cloned/spawned under `Workspace.GreenAgainV5_StoryRuntime`.
+- Templates in `Workspace.Trash` must keep `Interactable=false`.
+- Runtime clones must set quest-specific `InteractId`, `StoryQuestId`, `Collected`, `TrashCategory`, `ObjectName`, and `Action` before becoming interactable.
+- Imported `Script` / `LocalScript` descendants inside the library are disabled unless a future documented gameplay system intentionally enables them.
+- There should be exactly one root `Workspace.Trash`, and it should be a `Folder`.
+
+`StoryRuntimeMVP` integration:
+
+- `TRASH_LIBRARY_ROOT_NAME = "Trash"` points to the source library.
+- `TRASH_ASSET_VARIANTS` maps cleanup quest id + item index to a source template, runtime category, and Vietnamese display name.
+- `SORTING_BIN_TEMPLATE_PATH = { "Props", "Bins", "TrashCan_P7" }` is used for runtime sorting bin visuals.
+- Cleanup trash clones are created by `createTrashModel()` / `createTrashObject()` and parented under `Workspace.GreenAgainV5_StoryRuntime`.
+- Sorting bin clones are created by `createSortingBinObject()` and parented under `Workspace.GreenAgainV5_StoryRuntime`.
+- `pivotModelBottomTo()` grounds each clone by bounding box so the clone bottom sits on the configured spawn Y.
+- `setModelVisible()` operates over all `BasePart` descendants so wrapped `Model`, `MeshPart`, and imported `Accessory` templates work consistently.
+- `handleSorting()` opens the sorting minigame instead of auto-sorting when the player interacts with a world bin.
+- Fallback primitive trash still exists only as a safety fallback if a source template is missing.
+
+Current categories:
+
+| Category folder | Runtime category | Notes |
+|---|---|---|
+| `Collectibles.Plastic` | `Plastic` | Bottles, cup, wrappers, plastic bag |
+| `Collectibles.Metal` | `Metal` | Crushed can |
+| `Collectibles.PaperCardboard` | `Paper` | Paper and cardboard props |
+| `Collectibles.Mixed` | `Mixed` | Trash bags, food cartons, takeout containers |
+| `Collectibles.Organic` | Reserved | Future food-waste gameplay only |
+| `Collectibles.Hazardous` | Reserved | Future hazardous-waste gameplay only |
+| `Props.Bins` | Sorting/placement prop | Bin models/templates |
+| `Props.Piles` | Decoration/area dressing | Static pile visuals |
+| `Props.LargeDebris` | Decoration/debris | Large non-sorting debris |
+
+Sorting minigame rule:
+
+- World bins are approach/interaction targets only.
+- Actual classification happens in `StoryClientMVP.SortingMinigame`.
+- Drag items are visual cards; each card renders the picked trash model in a `ViewportFrame` from its `templatePath`.
+- Server validation lives in `StoryRuntimeMVP` via `SORTING_CATEGORY_TO_BIN`.
+- Server keeps both aggregate counts in `bag[TrashCategory]` and per-item visual data in `bagItems`.
+- Current quest cleanup categories map as `Plastic`, `Metal`, `Paper` -> `Recycle`; `Mixed` -> `Mixed`.
+- `Organic` and `Hazardous` bins are visible and supported by the minigame/server mapping for future items, but current main quest cleanup mappings do not yet place those categories in the bag.
+- If changing cleanup visuals, update `TRASH_ASSET_VARIANTS` and `docs/GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md` together.
+
+## 12. Imported Asset Scripts
 
 Studio hien co nhieu script nam trong:
 
 - `Workspace["=== GREEN AGAIN V5 ==="].SYSTEMS_REVIEW`
 - `Workspace["=== GREEN AGAIN V5 ==="].UNSORTED_REVIEW`
 - Imported door/vehicle/fixture/tree/model folders
+- `Workspace.Trash` source assets, if new imported models include scripts
 
 Examples observed:
 
@@ -621,10 +785,11 @@ Rule:
 
 - Khong xem cac asset script nay la game architecture chinh cua V5.
 - Khong sua hang loat asset script neu task la story/quest/HUD.
+- Trong `Workspace.Trash`, imported asset scripts should stay disabled unless their behavior is explicitly needed and documented.
 - Neu mot asset script gay loi runtime, ghi ro path va log, sua dung script do, khong refactor lan sang story runtime.
 - Neu chuyen asset thanh gameplay-critical object, cap nhat file nay va implementation summary.
 
-## 12. How To Add A New Quest Step
+## 13. How To Add A New Quest Step
 
 Truoc khi code:
 
@@ -653,7 +818,7 @@ Khong lam:
 - Khong spawn placeholder map location neu object that da ton tai.
 - Khong bo qua dialogue chi de di nhanh hon.
 
-## 13. How To Add A New Gameplay Activity
+## 14. How To Add A New Gameplay Activity
 
 Moi gameplay activity moi phai co mini-spec truoc khi code:
 
@@ -674,7 +839,7 @@ Test cases:
 
 Neu activity la bien the cua cleanup/sorting/placement/community, uu tien mo rong handler hien co. Chi tao handler moi khi co interaction semantics that su khac.
 
-## 14. Test Checklist For Code Structure Changes
+## 15. Test Checklist For Code Structure Changes
 
 Sau khi sua code trong Roblox:
 
@@ -694,7 +859,14 @@ Sau khi sua code trong Roblox:
 - Post-ending free roam an tracker/marker.
 - Neu co console noise tu imported asset, tach rieng voi loi MVP.
 
-## 15. Handoff Requirements
+Trash asset library checks:
+
+- `Workspace.Trash` exists as exactly one root `Folder`.
+- Source templates under `Workspace.Trash` keep `Interactable=false`.
+- No enabled `Script` or `LocalScript` remains inside `Workspace.Trash` unless documented.
+- Runtime clones, if used, are created under `Workspace.GreenAgainV5_StoryRuntime`.
+
+## 16. Handoff Requirements
 
 Moi lan sua code/gameplay, handoff phai noi ro:
 

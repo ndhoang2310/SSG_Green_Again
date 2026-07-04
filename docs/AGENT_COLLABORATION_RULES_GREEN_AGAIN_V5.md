@@ -48,6 +48,7 @@ Do not create real code first and explain architecture afterward. Plan the logic
 
 The current active MVP path is:
 
+- Startup loader: `game.ReplicatedFirst.GreenAgainStartupLoader`
 - Server: `game.ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP`
 - Client: `game.StarterPlayer.StarterPlayerScripts.StoryClientMVP`
 - Sprint: `game.StarterPlayer.StarterCharacterScripts.SprintStaminaScript`
@@ -68,6 +69,7 @@ Main menu ownership rule:
 
 - `MainMenuGui` / `MainMenuController` is currently being worked on by another team member.
 - Do not rewrite, delete, or visually redesign it unless the user explicitly assigns that task.
+- Keep `GreenAgainStartupLoader` as a separate `ReplicatedFirst` guard unless the menu owner explicitly takes over startup loading.
 - Story HUD and objective marker work should remain in `StoryClientMVP` and should not assume the menu has already been destroyed.
 - If touching startup flow, verify that the menu still locks controls, restores controls after PLAY, and does not reintroduce duplicate HUD.
 
@@ -101,7 +103,7 @@ Important object mappings:
 - Nhà văn hóa: `NhaVanHoa_ThonNoiChuan`
 - Điểm tập kết rác: `DiemTapKetRacThai_ThonVenSong`
 - Tạp hóa Cô Tư: `TapHoaCoTu_HouseOnly_Rural`
-- Sân bóng: `KhungThanh_01_Marker`, `KhungThanh_02_Marker`
+- Sân bóng: map thật nằm quanh `KhungThanh_01_Marker` / `KhungThanh_02_Marker` nếu còn tồn tại; Chapter 3 interaction dùng runtime invisible anchor `FieldCenter` ở trung tâm sân, không phụ thuộc holder khung thành.
 - Cống thật: `SYSTEMS_REVIEW.Doors_Vehicles_And_AssetScripts.OngThoatNuoc`
 
 Current important gameplay coordinates:
@@ -111,6 +113,7 @@ Current important gameplay coordinates:
 - Tạp hóa: `(78.78, 49.45, -3187.65)`
 - Sân bóng A: `(-67.07, 51.55, -3225.84)`
 - Sân bóng B: `(-51.72, 56.05, -3390.71)`
+- Trung tâm sân bóng / `FieldCenter`: `(-59.66, 55.45, -3309.73)`
 - Bờ sông Ch4: `(-160.482, 51.689, -3571.701)`
 - Gần cống Ch4: `(-198.184, 51.689, -3502.522)`
 - Gần bờ sông Ch4: `(-204.840, 54.054, -3481.669)`

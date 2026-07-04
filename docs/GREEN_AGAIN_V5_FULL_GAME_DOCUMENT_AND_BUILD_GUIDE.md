@@ -105,8 +105,9 @@ MVP là một **story-first vertical slice** — một lượt chơi liền mạ
 
 | Loại | Path | Ghi chú |
 |---|---|---|
+| **Startup loader** | `ReplicatedFirst.GreenAgainStartupLoader` | Màn loading đầu game có logo Green Again, đợi waiting screen render xong rồi fade |
 | **Server runtime** | `ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP` | Script server chính điều khiển story, quest, dialogue, interaction routing, cleanup spawning, placement, drain, community gather, notebook, ending |
-| **Client script** | `StarterPlayer.StarterPlayerScripts.StoryClientMVP` | Script client chính xử lý HUD, marker, dialogue UI, interaction prompt, feedback toast, notebook toast, ending overlay |
+| **Client script** | `StarterPlayer.StarterPlayerScripts.StoryClientMVP` | Script client chính xử lý HUD, marker, dialogue UI, sorting minigame, interaction prompt, feedback toast, notebook toast, ending overlay |
 | **Sprint script** | `StarterPlayer.StarterCharacterScripts.SprintStaminaScript` | Giữ logic sprint (Shift chạy nhanh), đã xóa stamina bar UI |
 
 ### 3.2 Script/UI đã xóa
@@ -119,12 +120,18 @@ MVP là một **story-first vertical slice** — một lượt chơi liền mạ
 
 ### 3.3 HUD hiện tại
 
+Startup loader:
+- `ReplicatedFirst.GreenAgainStartupLoader` thay default Roblox loading screen.
+- Hiện logo Green Again bằng asset `rbxassetid://112991523200169`.
+- Đợi `MainMenuGui.LogoImage`, `Workspace.MainMenuAssets.PlayBtn`, và `Workspace.MainMenuAssets.SetBtn` sẵn sàng rồi fade ra.
+
 MVP HUD được tạo bởi `StoryClientMVP`, bao gồm:
 - Quest tracker (chapter, quest title, objective text).
 - Interaction prompt (`[E] Action - Object`).
 - Dialogue panel (speaker, line progress `1 / 4`, continue/choice buttons).
 - Feedback toast.
 - Notebook toast.
+- Sorting minigame: kéo từng món rác trong túi vào thùng `Nguy hiểm`, `Tái chế`, `Hữu cơ`, hoặc `Còn lại`; mỗi món là card visual render model rác 3D từ `Workspace.Trash` bằng `ViewportFrame`.
 - Ending overlay.
 
 **Không còn:** Old top-left text `Đang nối map Green Again V5...`, old stamina bar.
@@ -147,6 +154,7 @@ Hệ thống bao gồm:
 - Dialogue-driven quest completion.
 - Interaction routing cho NPCs, locations, trash, placement, drain.
 - Runtime trash spawning.
+- Sorting quests mở mini game kéo-thả; server validate từng item trước khi complete quest.
 - Runtime placement markers.
 - Notebook toast (1 lần/chapter).
 - Ending text.
@@ -201,8 +209,23 @@ Data-driven dialogue cho toàn bộ main route:
 | Path | Mô tả |
 |---|---|
 | `Workspace["=== GREEN AGAIN V5 ==="]` | Root folder chứa toàn bộ map V5 |
+| `Workspace.Trash` | Thư viện source asset cho model rác/thùng rác/scene dressing; không phải runtime quest folder |
 | `MAP_ROUTE` | Sub-folder chính chứa route story |
 | `MAP_ROUTE.06_NPCs` | Folder chứa toàn bộ NPC chính |
+
+Trash asset library details live in:
+
+```text
+docs/GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md
+```
+
+Rule: template trong `Workspace.Trash` phải giữ `Interactable=false`. Runtime quest props vẫn spawn/clone vào `Workspace.GreenAgainV5_StoryRuntime`.
+
+Runtime status:
+
+- Cleanup trash visuals now clone from `Workspace.Trash.Collectibles`.
+- Sorting bin visuals now clone from `Workspace.Trash.Props.Bins.TrashCan_P7`.
+- Runtime clones are grounded by bounding box so their bottom sits on the configured spawn Y.
 
 ### 4.2 NPC Objects
 
@@ -1617,6 +1640,7 @@ Mỗi NPC phụ có Before/After lines ngắn. Đã có đầy đủ trong docs,
    - Cutscene staging → `GDD_GreenAgain_v5_CUTSCENE_SCRIPT.md`
    - Story/character → `GDD_GreenAgain_v5_STORY_BIBLE.md`
    - Map → `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md`
+   - Trash asset library → `GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md`
 
 ### 11.2 Cách kiểm tra Roblox Studio workspace
 
@@ -1626,6 +1650,7 @@ Mỗi NPC phụ có Before/After lines ngắn. Đã có đầy đủ trong docs,
 4. Xác nhận `MAP_ROUTE.06_NPCs` chứa: `BacXanh`, `ChiLan`, `CoTu`, `AnhTung`, `BeNa`, `OngSau`.
 5. Xác nhận `NhaVanHoa_ThonNoiChuan`, `DiemTapKetRacThai_ThonVenSong`, `TapHoaCoTu_HouseOnly_Rural` tồn tại.
 6. Xác nhận `OngThoatNuoc` tại `SYSTEMS_REVIEW.Doors_Vehicles_And_AssetScripts`.
+7. Nếu làm với model rác, xác nhận chỉ có một `Workspace.Trash` dạng `Folder`, source templates có `Interactable=false`, và runtime clone sẽ nằm trong `Workspace.GreenAgainV5_StoryRuntime`.
 
 ### 11.3 Cách xác nhận object path
 
@@ -1729,6 +1754,7 @@ end
    - Interact `E` hoạt động.
    - Dialogue mở đúng, advance đúng.
    - Quest complete → next quest start.
+   - Sorting quest: tới điểm tập kết, interact một thùng rác, kéo từng item vào đúng thùng trong mini game.
 3. Chạy toàn bộ route từ Q1_01 → PostEnding_FreeRoam.
 
 ### 11.11 Cách tránh duplicate UI/dialogue
@@ -1776,6 +1802,8 @@ end
 - [ ] Xác nhận target objects tồn tại trong workspace.
 - [ ] Xác nhận positions gần ground height.
 - [ ] Xác nhận NPC ở đúng vị trí.
+- [ ] Nếu dùng asset từ `Workspace.Trash`, clone sang `Workspace.GreenAgainV5_StoryRuntime` rồi mới set `Interactable=true`.
+- [ ] Không bật interaction trực tiếp trên source templates trong `Workspace.Trash`.
 
 #### Dialogue Validation
 

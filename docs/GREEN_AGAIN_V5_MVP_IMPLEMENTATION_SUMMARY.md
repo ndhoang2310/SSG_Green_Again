@@ -103,6 +103,13 @@ Used existing objects:
 - `NPC_OngSau_Marker`
 - `OngThoatNuoc`
 
+Chapter 3 sân bóng interaction update:
+
+- Holder/marker khung thành có thể bị xóa hoặc không tương tác được.
+- `Q3_01_ToFootballField`, `Q3_03_CleanField`, and `Q3_06_FieldReminder` now use `FieldCenter` instead of `FieldA`.
+- `FieldCenter` is an invisible runtime interaction anchor at `(-59.66, 55.45, -3309.73)`, placed at the center of the real football field.
+- This anchor is only for interaction/marker routing; it is not a visual placeholder for the field.
+
 Drain object:
 
 - Uses `Workspace["=== GREEN AGAIN V5 ==="].SYSTEMS_REVIEW.Doors_Vehicles_And_AssetScripts.OngThoatNuoc`
@@ -159,6 +166,13 @@ Observed in Roblox Studio on 2026-07-03:
 
 - `StarterGui.MainMenuGui.MainMenuController` now exists and appears to be the team's current waiting screen / main menu work.
 - This is separate from the story HUD in `StoryClientMVP`.
+- `ReplicatedFirst.GreenAgainStartupLoader` now shows a Green Again logo loading screen before the waiting screen is ready.
+- Startup loader behavior:
+  - Calls `ReplicatedFirst:RemoveDefaultLoadingScreen()`.
+  - Shows logo asset `rbxassetid://112991523200169` on a dark green loading screen.
+  - Waits for `MainMenuGui.LogoImage`, `Workspace.MainMenuAssets.PlayBtn`, and `Workspace.MainMenuAssets.SetBtn`.
+  - Fades out after the menu is ready, with a max wait fallback.
+  - Writes QA attributes on `PlayerGui`: `GreenAgainStartupLoaderShown`, `GreenAgainStartupLoaderReady`, `GreenAgainStartupLoaderDuration`, `GreenAgainStartupLoaderClosed`.
 - Current behavior from the script:
   - Holds the player in place during menu by anchoring the character at the menu scene, while leaving PlayerModule input state alive.
   - Uses a scriptable camera at roughly `(-249.381, 49.143, -3296.098)`.
@@ -218,7 +232,7 @@ Applied after `GREEN_AGAIN_V5_FULL_GAME_DOCUMENT_AND_BUILD_GUIDE.md` was created
 - Changed Q5 community gather to require the three main return visits from Cô Tư, Anh Tùng, and Ông Sáu.
 - Kept Chị Lan's Q5 role in the drain aftermath and ending, without requiring her as the fourth gather target.
 - Sent a `freeRoam` objective payload after ending so `StoryClientMVP` hides tracker/marker cleanly.
-- Extended gameplay positions for TrashSite, Grocery, FieldA, FieldB, River, and Drain so runtime markers/trash/placements use grounded map locations.
+- Extended gameplay positions for TrashSite, Grocery, FieldA, FieldB, FieldCenter, River, and Drain so runtime markers/trash/placements use grounded map locations.
 - Objective marker for cleanup and placement quests now follows the current uncollected trash or unplaced action instead of only pointing at the broad area.
 - Added explicit cleanup spawn positions for Ch4 river trash and Ch5 drain trash, so those clusters no longer rely on broad area offsets.
 - Changed cleanup trash from quest-time spawning to ambient pollution:
@@ -268,6 +282,68 @@ Expanded the MVP loop after the user requested deeper gameplay:
 - Added a simple runtime tree visual:
   - Before interaction it is a planting marker.
   - After interaction it becomes a trunk plus green crown.
+
+## Trash Asset Library
+
+Structured the new `game.Workspace.Trash` asset folder so future runtime work can reuse imported trash models safely.
+
+Current purpose:
+
+- `Workspace.Trash` is a source asset library and scene-dressing holder.
+- Active quest trash, bins, and placement props should still be spawned/cloned into `Workspace.GreenAgainV5_StoryRuntime`.
+- Source templates in `Workspace.Trash` keep `Interactable=false` so `StoryClientMVP` does not treat them as live quest targets.
+
+Current structure:
+
+```text
+Workspace.Trash
++-- Collectibles
+|   +-- Plastic
+|   +-- Metal
+|   +-- PaperCardboard
+|   +-- Mixed
+|   +-- Organic
+|   +-- Hazardous
++-- Props
+|   +-- Bins
+|   +-- Piles
+|   +-- LargeDebris
++-- ScenePlacements
++-- _Unsorted
++-- README_TrashLibrary
+```
+
+Important details:
+
+- There was previously a duplicate root name issue: one `Workspace.Trash` was a `Model`, another was a `Folder`.
+- The root is now a single `Folder`.
+- The old placed trash scene was preserved under `Workspace.Trash.ScenePlacements.LegacyTrashScene_CongArea`.
+- Imported scripts inside trash source assets were disabled, not deleted.
+- Template attributes now include `GreenAgainV5`, `GreenAgainAssetRole`, `GreenAgainKind`, `TrashCategory`, `ObjectName`, `Action`, and `Interactable=false`.
+- Full usage rules are documented in `docs/GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md`.
+
+Runtime replacement patch on 2026-07-04:
+
+- `StoryRuntimeMVP` now clones cleanup trash visuals from `Workspace.Trash.Collectibles` instead of building old primitive part models.
+- `StoryRuntimeMVP` now clones sorting bin visuals from `Workspace.Trash.Props.Bins.TrashCan_P7` instead of using plain colored block bins.
+- Each runtime clone is wrapped as a `Model`, tagged with `GreenAgainAssetRole="RuntimeClone"` and `SourceTrashTemplate`, and parented under `Workspace.GreenAgainV5_StoryRuntime`.
+- Runtime clone placement uses bounding-box grounding: after pivoting to the quest position, the clone shifts so its bottom sits exactly on the configured spawn Y.
+- Current cleanup mapping is documented in `docs/GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md`.
+
+Sorting minigame patch on 2026-07-04:
+
+- Sorting quests no longer auto-sort a whole category when the player presses `E` on a bin.
+- Interacting with any sorting bin opens a drag-and-drop minigame in `StoryClientMVP`.
+- The UI shows the current bag items as visual 3D trash cards and four bins: `Nguy hiểm`, `Tái chế`, `Hữu cơ`, `Còn lại`.
+- Each trash card uses a `ViewportFrame` preview cloned from the item's `Workspace.Trash` source template, so Q1 shows the actual trash bag, plastic bottle, and metal can models instead of text-only buttons.
+- `StoryRuntimeMVP` now tracks `state.bagItems` with each picked item's `category`, `name`, and `templatePath`.
+- `StoryRuntimeMVP` validates each drop through `OnSortingMinigameSubmit`.
+- Current mapping:
+  - `Plastic`, `Metal`, `Paper` -> `Recycle` / `Tái chế`.
+  - `Mixed` -> `Mixed` / `Còn lại`.
+  - `Organic` -> `Organic` / `Hữu cơ`.
+  - `Hazardous` -> `Hazardous` / `Nguy hiểm`.
+- When the bag is empty, the server closes the minigame and completes the sorting quest.
 
 ## Deleted Legacy Pieces
 
@@ -324,6 +400,13 @@ Play tests performed:
 - Verified Ch4 river trash spawns at those three positions, with client streaming all three models after teleporting near the river area.
 - Verified 16 ambient trash models exist at game start, with 53 visible child parts and `Interactable=false`.
 - Verified entering Q1 cleanup activates only the 3 Q1 trash objects.
+- Verified Q1 sorting opens `StoryClientMVP.SortingMinigame` with 3 draggable items and 4 bins after interacting with `sort_Q1_04_SortFirstTrash_Recycle`.
+- Verified all 3 Q1 sorting items render `ViewportFrame` previews with `WorldModel` children and template paths:
+  - `Collectibles/Mixed/TrashBag_BlackSmall`
+  - `Collectibles/Plastic/PlasticBottle_03`
+  - `Collectibles/Metal/MetalCan_Crushed`
+- Verified wrong submit `Plastic -> Mixed` keeps quest `Rác Đi Đâu?` active and reopens the minigame with retry text.
+- Verified correct submits `Plastic -> Recycle`, `Metal -> Recycle`, `Mixed -> Mixed` close the minigame and advance to `Q1_05_MeetChiLan`.
 - Verified collecting Q1 trash hides those objects while other ambient pollution remains visible.
 - Verified collecting a plastic bottle marks only that model collected/invisible, while the nearby bag/can remain visible and interactable.
 - Verified Q1 cleanup now leads into a sorting step at the trash collection point.
@@ -344,5 +427,20 @@ Play tests performed:
 - Simulated post-PLAY flow:
   - after `MainMenuGui` is removed, waiting island still has quest tracker hidden and no objective marker.
   - after moving to main island, quest tracker becomes visible and one `CurrentStoryObjectiveAnchor` marker is created.
+- Verified `Workspace.Trash` has exactly one root folder after restructuring.
+- Verified `Workspace.Trash` source templates have no descendants with `Interactable=true`.
+- Verified no enabled `Script` or `LocalScript` remains inside `Workspace.Trash`.
+- Verified Play mode spawns 16 cleanup trash clones from `Workspace.Trash` into `Workspace.GreenAgainV5_StoryRuntime`.
+- Verified all spawned cleanup clones have `SourceTrashTemplate` pointing to the new library asset.
+- Verified clone bottom Y matches the configured spawn Y for Q1, Q2, Q3, Q4 and Q5 cleanup trash.
+- Verified an automated Q1 flow reaches `Q1_04_SortFirstTrash` and spawns 4 sorting bin clones from `Workspace.Trash.Props.Bins.TrashCan_P7`.
+- Verified Q1 sorting bin bottom Y matches `TrashSite` spawn Y `58.450`.
+- Verified startup loader in Play mode:
+  - `GreenAgainStartupLoaderShown=true`
+  - `GreenAgainStartupLoaderReady=true`
+  - `GreenAgainStartupLoaderClosed=true`
+  - duration was about `3.59s`
+  - loader ScreenGui was destroyed after fade
+  - `MainMenuGui` remained enabled with `LogoImage`, `PlayBtn`, and `SetBtn` ready.
 
 Known unrelated console noise from imported assets remained, including texture permission and existing asset script warnings. These were not introduced by the MVP story scripts.
