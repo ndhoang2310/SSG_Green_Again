@@ -190,6 +190,8 @@ Workspace.Trash.Props.Bins.TrashCan_P7
 Runtime bin clones are recolored by minigame bin and use the same grounded-bottom placement rule.
 World bin interaction now opens the sorting minigame; the bins no longer auto-sort a whole category directly.
 Sorting minigame items also use this library visually: `StoryRuntimeMVP` sends each picked item's `templatePath`, and `StoryClientMVP` resolves that path under `Workspace.Trash` to render a 3D `ViewportFrame` card.
+`Props.Piles` previews use world-corner bounds plus a high angled camera because the pile assets are very thin and can disappear when rendered edge-on.
+`Collectibles.Plastic.PlasticBag_Crumpled` also uses the high angled preview camera so the crumpled bag is visible instead of being framed edge-on.
 
 Sorting minigame bin mapping:
 
@@ -204,26 +206,66 @@ Sorting minigame bin mapping:
 
 ## 6. Current Quest Asset Mapping
 
-Current cleanup quest visual mapping in `StoryRuntimeMVP`:
+Current cleanup quest visual mapping in `StoryRuntimeMVP`.
+
+2026-07-04 density/diversity pass:
+
+- Cleanup quests now use 47 runtime trash visuals total: Q1=10, Q2=9, Q3=10, Q4=9, Q5=9.
+- Each chapter has 2-3 pile/stain visuals from `Workspace.Trash.Props.Piles`.
+- Runtime pile/stain entries are asset-specific: `TrashPile_Part` uses `rotation = CFrame.Angles(math.rad(90), 0, 0)`, while `TrashPile_Model` uses `preserveTemplateRotation = true`.
+- Runtime pile/stain entries use `heightOffset = -0.04` so the thin plane sits slightly into the ground rather than floating.
+- Small mixed trash bags use per-entry `scale` (`TrashBag_BlackSmall` = `1.45`, `TrashBag_Garbage01` = `1.25`) before grounding.
+- `Q1_03_CleanEntrance` spawn Y was corrected to `48.43`, matching the concrete ground in front of the community house.
 
 | Quest | Index | Template | Runtime category | Display name |
 |---|---:|---|---|---|
-| `Q1_03_CleanEntrance` | 1 | `Collectibles.Mixed.TrashBag_BlackSmall` | `Mixed` | Túi rác lẫn |
+| `Q1_03_CleanEntrance` | 1 | `Collectibles.Mixed.TrashBag_BlackSmall` | `Mixed` | Túi rác lẫn (`scale=1.45`) |
 | `Q1_03_CleanEntrance` | 2 | `Collectibles.Plastic.PlasticBottle_03` | `Plastic` | Chai nhựa |
 | `Q1_03_CleanEntrance` | 3 | `Collectibles.Metal.MetalCan_Crushed` | `Metal` | Lon nước |
+| `Q1_03_CleanEntrance` | 4 | `Props.Piles.TrashPile_Part` | `Mixed` | Vết bẩn trước sân (`rotation=X90`, `scale=1.15`, `heightOffset=-0.04`) |
+| `Q1_03_CleanEntrance` | 5 | `Collectibles.Plastic.CandyWrapper` | `Plastic` | Vỏ kẹo |
+| `Q1_03_CleanEntrance` | 6 | `Collectibles.PaperCardboard.PaperSheet` | `Paper` | Tờ giấy rơi |
+| `Q1_03_CleanEntrance` | 7 | `Props.Piles.TrashPile_Model` | `Mixed` | Bãi bẩn lối vào (`preserveTemplateRotation=true`, `scale=1.05`, `heightOffset=-0.04`) |
+| `Q1_03_CleanEntrance` | 8 | `Collectibles.PaperCardboard.CardboardBox_Carton` | `Paper` | Thùng carton (`preserveTemplateRotation=true`) |
+| `Q1_03_CleanEntrance` | 9 | `Collectibles.Plastic.PlasticBag_Crumpled` | `Plastic` | Túi nilon vò |
+| `Q1_03_CleanEntrance` | 10 | `Props.Piles.TrashPile_Part` | `Mixed` | Vệt bẩn sát bậc thềm (`rotation=X90`, `scale=0.95`, `heightOffset=-0.04`) |
 | `Q2_03_CleanGrocery` | 1 | `Collectibles.Plastic.PlasticBag_Crumpled` | `Plastic` | Túi nilon vò |
 | `Q2_03_CleanGrocery` | 2 | `Collectibles.Plastic.SnackWrapper_Lays` | `Plastic` | Vỏ snack |
 | `Q2_03_CleanGrocery` | 3 | `Collectibles.PaperCardboard.Paper_Crumpled` | `Paper` | Giấy vò |
+| `Q2_03_CleanGrocery` | 4 | `Collectibles.Mixed.TakeoutCarton_01` | `Mixed` | Hộp đồ ăn |
+| `Q2_03_CleanGrocery` | 5 | `Props.Piles.TrashPile_Part` | `Mixed` | Vết bẩn trước tiệm (`rotation=X90`, `scale=1.15`, `heightOffset=-0.04`) |
+| `Q2_03_CleanGrocery` | 6 | `Collectibles.Plastic.PlasticCup_RedSolo` | `Plastic` | Ly nhựa |
+| `Q2_03_CleanGrocery` | 7 | `Collectibles.Mixed.Carton_Milk` | `Mixed` | Hộp sữa |
+| `Q2_03_CleanGrocery` | 8 | `Props.Piles.TrashPile_Part` | `Mixed` | Vệt nước bẩn trước quầy (`rotation=X90`, `scale=0.95`, `heightOffset=-0.04`) |
+| `Q2_03_CleanGrocery` | 9 | `Collectibles.Metal.MetalCan_Crushed` | `Metal` | Lon nước |
 | `Q3_03_CleanField` | 1 | `Collectibles.Plastic.PlasticBottle_03` | `Plastic` | Chai nhựa |
 | `Q3_03_CleanField` | 2 | `Collectibles.Plastic.PlasticCup_RedSolo` | `Plastic` | Ly nhựa |
 | `Q3_03_CleanField` | 3 | `Collectibles.Plastic.SnackWrapper_Lays` | `Plastic` | Vỏ snack |
 | `Q3_03_CleanField` | 4 | `Collectibles.Metal.MetalCan_Crushed` | `Metal` | Lon nước |
-| `Q4_02_FollowRiverTrash` | 1 | `Collectibles.Mixed.TrashBag_Garbage01` | `Mixed` | Túi rác mắc bờ sông |
+| `Q3_03_CleanField` | 5 | `Collectibles.Organic.BananaPeel` | `Organic` | Vỏ chuối |
+| `Q3_03_CleanField` | 6 | `Props.Piles.TrashPile_Part` | `Mixed` | Vết bẩn sau trận (`rotation=X90`, `scale=1.15`, `heightOffset=-0.04`) |
+| `Q3_03_CleanField` | 7 | `Collectibles.Plastic.CandyWrapper` | `Plastic` | Vỏ kẹo |
+| `Q3_03_CleanField` | 8 | `Props.Piles.TrashPile_Model` | `Mixed` | Bãi bẩn gần khán đài (`preserveTemplateRotation=true`, `scale=1.10`, `heightOffset=-0.04`) |
+| `Q3_03_CleanField` | 9 | `Collectibles.PaperCardboard.Paper_Crumpled` | `Paper` | Giấy vò |
+| `Q3_03_CleanField` | 10 | `Props.Piles.TrashPile_Part` | `Mixed` | Vệt bẩn trên sân (`rotation=X90`, `scale=0.95`, `heightOffset=-0.04`) |
+| `Q4_02_FollowRiverTrash` | 1 | `Collectibles.Mixed.TrashBag_Garbage01` | `Mixed` | Túi rác mắc bờ sông (`scale=1.25`) |
 | `Q4_02_FollowRiverTrash` | 2 | `Collectibles.Plastic.PlasticBottle_03` | `Plastic` | Chai nhựa trôi dạt |
 | `Q4_02_FollowRiverTrash` | 3 | `Collectibles.PaperCardboard.Paper_Crumpled` | `Paper` | Giấy ướt |
-| `Q5_02_ClearDrain` | 1 | `Collectibles.Mixed.TrashBag_BlackSmall` | `Mixed` | Túi rác kẹt cống |
+| `Q4_02_FollowRiverTrash` | 4 | `Props.Piles.TrashPile_Model` | `Mixed` | Bãi rác dạt bờ (`preserveTemplateRotation=true`, `scale=1.15`, `heightOffset=-0.04`) |
+| `Q4_02_FollowRiverTrash` | 5 | `Collectibles.Hazardous.ChemicalBottle_Small` | `Hazardous` | Chai hóa chất nhỏ |
+| `Q4_02_FollowRiverTrash` | 6 | `Collectibles.Plastic.PlasticBag_Crumpled` | `Plastic` | Túi nilon mắc cỏ |
+| `Q4_02_FollowRiverTrash` | 7 | `Props.Piles.TrashPile_Part` | `Mixed` | Vệt bùn rác bờ sông (`rotation=X90`, `scale=1.05`, `heightOffset=-0.04`) |
+| `Q4_02_FollowRiverTrash` | 8 | `Collectibles.Metal.MetalCan_Crushed` | `Metal` | Lon nước dạt bờ |
+| `Q4_02_FollowRiverTrash` | 9 | `Props.Piles.TrashPile_Model` | `Mixed` | Cụm rác kẹt mép nước (`preserveTemplateRotation=true`, `scale=0.95`, `heightOffset=-0.04`) |
+| `Q5_02_ClearDrain` | 1 | `Collectibles.Mixed.TrashBag_BlackSmall` | `Mixed` | Túi rác kẹt cống (`scale=1.45`) |
 | `Q5_02_ClearDrain` | 2 | `Collectibles.Plastic.PlasticBottle_03` | `Plastic` | Chai nhựa kẹt cống |
 | `Q5_02_ClearDrain` | 3 | `Collectibles.Metal.MetalCan_Crushed` | `Metal` | Lon nước kẹt cống |
+| `Q5_02_ClearDrain` | 4 | `Props.Piles.TrashPile_Model` | `Mixed` | Bùn rác miệng cống (`preserveTemplateRotation=true`, `scale=1.15`, `heightOffset=-0.04`) |
+| `Q5_02_ClearDrain` | 5 | `Collectibles.Hazardous.Battery_Old` | `Hazardous` | Pin cũ kẹt cống |
+| `Q5_02_ClearDrain` | 6 | `Collectibles.Hazardous.LightBulb_Broken` | `Hazardous` | Bóng đèn vỡ |
+| `Q5_02_ClearDrain` | 7 | `Collectibles.Hazardous.ChemicalBottle_Small` | `Hazardous` | Chai hóa chất nhỏ |
+| `Q5_02_ClearDrain` | 8 | `Props.Piles.TrashPile_Part` | `Mixed` | Vệt bùn quanh cống (`rotation=X90`, `scale=1.05`, `heightOffset=-0.04`) |
+| `Q5_02_ClearDrain` | 9 | `Props.Piles.TrashPile_Model` | `Mixed` | Cụm rác nghẹt cống (`preserveTemplateRotation=true`, `scale=0.95`, `heightOffset=-0.04`) |
 
 If changing which model appears in a quest, update `TRASH_ASSET_VARIANTS` in:
 
@@ -251,7 +293,8 @@ Workspace.Trash.ScenePlacements.LegacyTrashScene_CongArea
   - Every cleanup clone had `SourceTrashTemplate` set to a real template path.
   - Clone bottom Y matched the quest spawn Y for Q1, Q2, Q3, Q4, and Q5 cleanup positions.
   - Automated Q1 flow reached `Q1_04_SortFirstTrash` and spawned `4` sorting bin clones from `Props/Bins/TrashCan_P7`.
-  - Sorting bin bottom Y matched `TrashSite` spawn Y `58.450`.
+  - `TrashSite` spawn/interact Y is now `51.52`, lowered from the old high marker position.
+  - World sorting-bin interactables are invisible `StorySortingBinHitbox_*` parts; the static scene bins provide the visible bins.
   - Source templates remained `Interactable=false`.
 - Sorting minigame verification on 2026-07-04:
   - Q1 sorting interaction opened `StoryClientMVP.SortingMinigame` with `3` bag items and `4` bins.

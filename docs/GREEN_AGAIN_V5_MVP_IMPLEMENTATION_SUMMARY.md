@@ -330,12 +330,24 @@ Runtime replacement patch on 2026-07-04:
 - Runtime clone placement uses bounding-box grounding: after pivoting to the quest position, the clone shifts so its bottom sits exactly on the configured spawn Y.
 - Current cleanup mapping is documented in `docs/GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md`.
 
+Cleanup diversity patch on 2026-07-04:
+
+- Cleanup quests now spawn more varied visuals across all chapters: 10 items in Q1, 9 in Q2, 10 in Q3, 9 in Q4, and 9 in Q5.
+- Dirt/stain cleanup visuals use `Workspace.Trash.Props.Piles` (`TrashPile_Part` or `TrashPile_Model`) instead of ad hoc primitive stains.
+- Pile/stain runtime clones now support per-entry `rotation`, `preserveTemplateRotation`, and `heightOffset`. `TrashPile_Part` uses `CFrame.Angles(math.rad(90), 0, 0)`, while `TrashPile_Model` keeps its template rotation.
+- Pile/stain runtime clones now use per-entry `heightOffset = -0.04`, placing the thin stain plane slightly into the ground so it does not appear to float.
+- Runtime grounding now uses world-corner Y extents instead of `Model:GetBoundingBox()` height, which keeps rotated flat pile parts from floating above the ground.
+- Mixed trash bag runtime clones now support per-entry `scale`; `TrashBag_BlackSmall` uses `1.45`, and `TrashBag_Garbage01` uses `1.25`.
+- `Q1_03_CleanEntrance` trash spawn Y was corrected from the old floating height to `48.43`; normal Q1 clone bottoms sit at `48.43`, while Q1 pile bottoms sit around `48.39` because of `heightOffset = -0.04`.
+
 Sorting minigame patch on 2026-07-04:
 
 - Sorting quests no longer auto-sort a whole category when the player presses `E` on a bin.
 - Interacting with any sorting bin opens a drag-and-drop minigame in `StoryClientMVP`.
 - The UI shows the current bag items as visual 3D trash cards and four bins: `Nguy hiểm`, `Tái chế`, `Hữu cơ`, `Còn lại`.
-- Each trash card uses a `ViewportFrame` preview cloned from the item's `Workspace.Trash` source template, so Q1 shows the actual trash bag, plastic bottle, and metal can models instead of text-only buttons.
+- Each trash card uses a `ViewportFrame` preview cloned from the item's `Workspace.Trash` source template, so the minigame shows actual trash/pile models instead of text-only buttons.
+- Pile previews use world-corner bounds and a higher angled camera so thin `Props.Piles` assets render visibly instead of edge-on.
+- `PlasticBag_Crumpled` previews also use the higher angled camera so the crumpled plastic bag is framed visibly.
 - `StoryRuntimeMVP` now tracks `state.bagItems` with each picked item's `category`, `name`, and `templatePath`.
 - `StoryRuntimeMVP` validates each drop through `OnSortingMinigameSubmit`.
 - Current mapping:
@@ -387,6 +399,8 @@ Play tests performed:
 - Verified stamina UI no longer appears.
 - Verified sprint script now has no stamina/cooldown variables and keeps direct Shift sprint behavior.
 - Verified Q1 marker and trash use corrected ground-level positions.
+- Lowered the client objective marker offset from `Vector3.new(0, 4.4, 0)` to `Vector3.new(0, 3.4, 0)` so the guide marker sits closer to the target.
+- Removed the small fake trash/can props `BanSoanRac_ChongRacGia_1`, `BanSoanRac_ChongRacGia_2`, and `BanSoanRac_ChongRacGia_3` from the trash sorting station scene.
 - Verified CS0 intro overlay appears after entering the main map.
 - Verified Q1 after-cleanup Bác Xanh dialogue opens before `Q1_04_SortFirstTrash`.
 - Verified free-roam objective payload hides tracker and removes marker.
@@ -398,13 +412,20 @@ Play tests performed:
   - `(-198.184, 51.689, -3502.522)`
   - `(-204.840, 54.054, -3481.669)`
 - Verified Ch4 river trash spawns at those three positions, with client streaming all three models after teleporting near the river area.
-- Verified 16 ambient trash models exist at game start, with 53 visible child parts and `Interactable=false`.
-- Verified entering Q1 cleanup activates only the 3 Q1 trash objects.
-- Verified Q1 sorting opens `StoryClientMVP.SortingMinigame` with 3 draggable items and 4 bins after interacting with `sort_Q1_04_SortFirstTrash_Recycle`.
-- Verified all 3 Q1 sorting items render `ViewportFrame` previews with `WorldModel` children and template paths:
+- Previously verified 16 ambient trash models existed at game start, with 53 visible child parts and `Interactable=false`; the 2026-07-04 diversity patch now maps 27 cleanup visuals total.
+- Verified entering Q1 cleanup activates exactly 6 Q1 trash objects.
+- Verified all 6 Q1 runtime clone bottoms sit at Y `48.43` after the height correction, including the `Props/Piles/TrashPile_Part` stain.
+- Q1 sorting visual cards use `ViewportFrame` previews with `WorldModel` children and template paths; after the diversity patch Q1 bag items include:
   - `Collectibles/Mixed/TrashBag_BlackSmall`
   - `Collectibles/Plastic/PlasticBottle_03`
   - `Collectibles/Metal/MetalCan_Crushed`
+  - `Props/Piles/TrashPile_Part`
+  - `Collectibles/Plastic/CandyWrapper`
+  - `Collectibles/PaperCardboard/PaperSheet`
+- Fixed sorting drag alignment after visual cards were added:
+  - Removed the old click-offset based drag positioning.
+  - Drag clone now anchors at its center and follows the pointer using coordinates corrected by `StoryClientMVP`'s `ResponsiveScale`.
+  - Verified Q1 sorting previously opened at UI scale `0.84765625`; current Q1 cleanup now feeds 6 visual items into the same centered drag path.
 - Verified wrong submit `Plastic -> Mixed` keeps quest `Rác Đi Đâu?` active and reopens the minigame with retry text.
 - Verified correct submits `Plastic -> Recycle`, `Metal -> Recycle`, `Mixed -> Mixed` close the minigame and advance to `Q1_05_MeetChiLan`.
 - Verified collecting Q1 trash hides those objects while other ambient pollution remains visible.
@@ -434,7 +455,8 @@ Play tests performed:
 - Verified all spawned cleanup clones have `SourceTrashTemplate` pointing to the new library asset.
 - Verified clone bottom Y matches the configured spawn Y for Q1, Q2, Q3, Q4 and Q5 cleanup trash.
 - Verified an automated Q1 flow reaches `Q1_04_SortFirstTrash` and spawns 4 sorting bin clones from `Workspace.Trash.Props.Bins.TrashCan_P7`.
-- Verified Q1 sorting bin bottom Y matches `TrashSite` spawn Y `58.450`.
+- `TrashSite` gameplay/interact Y was lowered to `51.52` so the green objective marker and sorting-bin interaction are reachable from the ground.
+- Runtime sorting-bin world objects are now invisible `StorySortingBinHitbox_*` parts; visible bins come from the static sorting station scene, avoiding duplicate small bin/can props in front of the table.
 - Verified startup loader in Play mode:
   - `GreenAgainStartupLoaderShown=true`
   - `GreenAgainStartupLoaderReady=true`

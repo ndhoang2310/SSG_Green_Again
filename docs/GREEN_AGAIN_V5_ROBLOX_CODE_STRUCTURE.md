@@ -156,7 +156,7 @@ Q2_03_CleanGrocery = {
     targetType = "Cleanup",
     targetId = "Grocery",
     complete = "Cleanup",
-    count = 3,
+    count = 5,
     next = "Q2_04_SortGroceryTrash",
 }
 ```
@@ -349,6 +349,7 @@ Marker rules:
 
 - Chi mot marker active.
 - Hinh thoi xanh + ten target.
+- Billboard `StudsOffset` hien tai la `Vector3.new(0, 3.4, 0)` de marker nam gan target hon.
 - Khong hien distance.
 - An khi dialogue mo.
 - An khi main menu con active.
@@ -733,12 +734,18 @@ Role:
 
 - `TRASH_LIBRARY_ROOT_NAME = "Trash"` points to the source library.
 - `TRASH_ASSET_VARIANTS` maps cleanup quest id + item index to a source template, runtime category, and Vietnamese display name.
+- Current cleanup counts are Q1=10, Q2=9, Q3=10, Q4=9, Q5=9. Keep each quest `count` aligned with its `TRASH_ASSET_VARIANTS` entry count.
+- Dirt/stain cleanup visuals should use `Workspace.Trash.Props.Piles`; current mappings use `TrashPile_Part` for small flat stains and `TrashPile_Model` for larger pile/stain clusters.
+- `TRASH_ASSET_VARIANTS` entries may include `rotation`, `preserveTemplateRotation`, `scale`, and `heightOffset`. Current `TrashPile_Part` entries use `rotation = CFrame.Angles(math.rad(90), 0, 0)`, current `TrashPile_Model` entries use `preserveTemplateRotation = true`, and all pile/stain entries use `heightOffset = -0.04`; current small mixed bags use `scale = 1.45` or `1.25`.
+- `Q1_03_CleanEntrance` spawn Y is `48.43`, measured against `SanBeTong_Truoc` in front of the community house.
 - `SORTING_BIN_TEMPLATE_PATH = { "Props", "Bins", "TrashCan_P7" }` is used for runtime sorting bin visuals.
 - Cleanup trash clones are created by `createTrashModel()` / `createTrashObject()` and parented under `Workspace.GreenAgainV5_StoryRuntime`.
 - Sorting bin clones are created by `createSortingBinObject()` and parented under `Workspace.GreenAgainV5_StoryRuntime`.
-- `pivotModelBottomTo()` grounds each clone by bounding box so the clone bottom sits on the configured spawn Y.
+- `pivotModelBottomTo()` applies optional extra rotation and height offset, then grounds each clone by world-corner Y extents so rotated flat parts sit on the configured spawn Y plus any `heightOffset`.
 - `setModelVisible()` operates over all `BasePart` descendants so wrapped `Model`, `MeshPart`, and imported `Accessory` templates work consistently.
 - `handleSorting()` opens the sorting minigame instead of auto-sorting when the player interacts with a world bin.
+- `TrashSite` uses ground-level gameplay/interact Y `51.52` so the green marker and sorting-bin interaction are reachable without jumping.
+- Sorting-bin world interactables are invisible `StorySortingBinHitbox_*` parts; do not clone visible bin props at runtime because the sorting station already has static visible bins.
 - Fallback primitive trash still exists only as a safety fallback if a source template is missing.
 
 Current categories:
@@ -749,10 +756,10 @@ Current categories:
 | `Collectibles.Metal` | `Metal` | Crushed can |
 | `Collectibles.PaperCardboard` | `Paper` | Paper and cardboard props |
 | `Collectibles.Mixed` | `Mixed` | Trash bags, food cartons, takeout containers |
-| `Collectibles.Organic` | Reserved | Future food-waste gameplay only |
-| `Collectibles.Hazardous` | Reserved | Future hazardous-waste gameplay only |
+| `Collectibles.Organic` | `Organic` | Food waste, currently used by Q3 |
+| `Collectibles.Hazardous` | `Hazardous` | Batteries/chemical bottle, currently used by Q4/Q5 |
 | `Props.Bins` | Sorting/placement prop | Bin models/templates |
-| `Props.Piles` | Decoration/area dressing | Static pile visuals |
+| `Props.Piles` | `Mixed` or decoration | Runtime dirt/stain cleanup visuals and static pile visuals |
 | `Props.LargeDebris` | Decoration/debris | Large non-sorting debris |
 
 Sorting minigame rule:
@@ -760,6 +767,9 @@ Sorting minigame rule:
 - World bins are approach/interaction targets only.
 - Actual classification happens in `StoryClientMVP.SortingMinigame`.
 - Drag items are visual cards; each card renders the picked trash model in a `ViewportFrame` from its `templatePath`.
+- `Props.Piles` cards use world-corner preview bounds and a higher angled camera so thin pile/stain visuals are not rendered edge-on.
+- `Collectibles.Plastic.PlasticBag_Crumpled` uses the same high-angle preview path as piles so the crumpled bag is not framed too flat.
+- Drag positioning uses centered cards and `ResponsiveScale`-corrected panel coordinates. Do not restore the old `draggingItem.offset = point - button.AbsolutePosition` approach, because it can shift away from the cursor when the HUD is scaled or the pointer starts over a child icon.
 - Server validation lives in `StoryRuntimeMVP` via `SORTING_CATEGORY_TO_BIN`.
 - Server keeps both aggregate counts in `bag[TrashCategory]` and per-item visual data in `bagItems`.
 - Current quest cleanup categories map as `Plastic`, `Metal`, `Paper` -> `Recycle`; `Mixed` -> `Mixed`.
