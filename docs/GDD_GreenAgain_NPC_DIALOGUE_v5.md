@@ -362,6 +362,24 @@ Cô Tư:
 Được. Cô còn nhắc khách nữa. Nói nhẹ thôi, nhưng ngày nào cũng nói thì chắc thành quen.
 ```
 
+Next beat:
+
+```text
+Sau đoạn này, quest chuyển sang `Q2_06_TalkToBacXanh`.
+```
+
+### Bác Xanh - Q2 After Grocery
+
+Trigger: player gặp Bác Xanh ngoài tạp hóa sau khi nói lại với Cô Tư.
+
+```text
+Bác Xanh:
+Cháu thấy đó, tiệm tạp hóa cũng là một phần của câu chuyện.
+
+Bác Xanh:
+Còn ở sân bóng, rác đến từ những lúc vui nhất. Khi người ta vui, người ta càng dễ nghĩ lát nữa tính.
+```
+
 Notebook:
 
 ```text
@@ -986,4 +1004,3 @@ After:
 Thông cống một lần thì được.
 Nhưng giữ cho nó khỏi nghẹt lại mới là chuyện của cả xóm.
 ```
-

@@ -1,22 +1,37 @@
-# Green Again V5 - Roblox Code Structure
+# Green Again V6 - Roblox Code Structure
 
-Date: 2026-07-03
+Date: 2026-07-05
 
-Purpose: tai lieu nay mo ta cau truc code hien co trong Roblox Studio cho Green Again V5. Doc file nay truoc khi them, sua, tach, hoac refactor script trong Roblox.
+Purpose: tai lieu nay mo ta cau truc code hien co trong Roblox Studio cho Green Again V6. Doc file nay truoc khi them, sua, tach, hoac refactor script trong Roblox.
 
 Scope:
 
-- Dua tren V5 docs hien tai va cay script doc truc tiep tu Roblox Studio.
-- Tap trung vao code gameplay/story active cua V5.
-- Cac script nam trong asset import/model review duoc ghi nhan la "asset script" va khong phai runtime chinh neu chua duoc V5 doc chap nhan.
+- Dua tren V6 docs hien tai va cay script doc truc tiep tu Roblox Studio.
+- Tap trung vao code gameplay/story active cua V6.
+- Cac script nam trong asset import/model review duoc ghi nhan la "asset script" va khong phai runtime chinh neu chua duoc V6 doc chap nhan.
+
+## 0. V6 Expansion Note
+
+V6 inherits the active V5 story runtime baseline, then adds Chapter 5 expansion content inside the same MVP scripts and map root:
+
+```text
+Q5_05_ResidentialAfterRain
+-> Q5_06_CareSmallLives
+-> Q5_07_NeighborhoodPlanting
+-> Q5_08_ReturnToCommunityHouse
+```
+
+These are implemented inside the existing `StoryRuntimeMVP` and `StoryClientMVP` patterns. Do not add animal AI, pathfinding, rescue simulation, or a new minigame for `CareSmallLives`; use cleanup, placement, visual state changes, and dialogue reactions.
+
+Important: the current Studio root remains `Workspace["=== GREEN AGAIN V5 ==="]`. Any `=== GREEN AGAIN V6 ===` root should be treated as a future migration/rename note, not the active implementation target for this pass.
 
 ## 1. Rule Doc Truoc Khi Code
 
 Truoc khi code trong Roblox, agent phai lam theo thu tu:
 
-1. Doc `docs/AGENT_COLLABORATION_RULES_GREEN_AGAIN_V5.md`.
-2. Doc `docs/GREEN_AGAIN_V5_FULL_GAME_DOCUMENT_AND_BUILD_GUIDE.md`.
-3. Doc `docs/GREEN_AGAIN_V5_MVP_IMPLEMENTATION_SUMMARY.md`.
+1. Doc `docs/V6/AGENT_COLLABORATION_RULES_GREEN_AGAIN_V6.md`.
+2. Doc `docs/V6/GREEN_AGAIN_V6_FULL_GAME_DOCUMENT_AND_BUILD_GUIDE.md`.
+3. Doc `docs/V6/GREEN_AGAIN_V6_MVP_IMPLEMENTATION_SUMMARY.md`.
 4. Doc file nay de biet script nao dang so huu behavior nao.
 5. Neu sua quest/dialogue/map/cutscene, doc them doc chuyen biet tuong ung.
 6. Viet plan ngan truoc khi sua script:
@@ -31,7 +46,7 @@ Khong tao script moi neu behavior co the nam trong script active hien co.
 
 ## 2. High-Level Architecture
 
-Green Again V5 hien la mot MVP Roblox Studio tap trung vao 2 script story chinh:
+Green Again V6 hien la mot MVP Roblox Studio tap trung vao 2 script story chinh:
 
 ```text
 ServerScriptService
@@ -68,7 +83,7 @@ ReplicatedStorage
     +-- Events_To_Add             -- RemoteEvents for story runtime/client
 
 Workspace
-+-- === GREEN AGAIN V5 ===        -- main map root
++-- === GREEN AGAIN V5 ===        -- current main map root used by V6 expansion
 +-- Trash                         -- source asset library for trash templates and scene dressing
 +-- GreenAgainV5_ClientAnchors    -- server-created marker anchor parts
 +-- GreenAgainV5_StoryRuntime     -- runtime props folder when spawned
@@ -87,8 +102,8 @@ Design principle:
 
 | Layer | Path | Class | Owner | Chinh sua khi nao |
 |---|---|---|---|---|
-| Server story | `game.ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP` | `Script` | Green Again V5 MVP | Quest, dialogue data, interaction routing, runtime trash/bin/placement, NPC staging, player story state |
-| Client story | `game.StarterPlayer.StarterPlayerScripts.StoryClientMVP` | `LocalScript` | Green Again V5 MVP | HUD, marker, dialogue panel, choice buttons, interaction prompt, notebook/end overlay |
+| Server story | `game.ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP` | `Script` | Green Again V6 MVP | Quest, dialogue data, interaction routing, runtime trash/bin/placement, NPC staging, player story state |
+| Client story | `game.StarterPlayer.StarterPlayerScripts.StoryClientMVP` | `LocalScript` | Green Again V6 MVP | HUD, marker, dialogue panel, choice buttons, interaction prompt, notebook/end overlay |
 | Startup loader | `game.ReplicatedFirst.GreenAgainStartupLoader` | `LocalScript` | Startup presentation | Logo loading screen before `MainMenuGui`/`MainMenuAssets` finish rendering |
 | Sprint | `game.StarterPlayer.StarterCharacterScripts.SprintStaminaScript` | `LocalScript` | Movement utility | Shift sprint speed only; do not restore old stamina bar |
 | Main menu | `game.StarterGui.MainMenuGui.MainMenuController` | `LocalScript` | Team-owned waiting screen | Only touch if user explicitly assigns menu/startup flow |
@@ -100,10 +115,10 @@ Design principle:
 
 Obsolete systems must not be recreated:
 
-- `StarterGui.GreenAgainHUD_V5`
+- `StarterGui.GreenAgainHUD_V6`
 - `StarterPlayer.StarterPlayerScripts.GreenAgainObjectiveClient`
 - `ServerScriptService.GreenAgainProject.Runtime_To_Add.MapWiringBootstrap`
-- Text UI cu: `Dang noi map Green Again V5...`
+- Text UI cu: `Dang noi map Green Again V6...`
 
 ## 4. Server Runtime: StoryRuntimeMVP
 
@@ -211,6 +226,8 @@ game.ReplicatedStorage.GreenAgainProject.Events_To_Add
 | `OnEndText` | Server -> Client | text | Overlay ket thuc/post-ending |
 | `OnSortingMinigameOpen` | Server -> Client | sorting payload or `{ close = true }` | Mo/dong UI keo-tha phan loai rac |
 | `OnSortingMinigameSubmit` | Client -> Server | `itemCategory`, `binId` | Submit mot mon rac vao thung; server validate dung/sai |
+| `OnCutsceneStart` | Server -> Client | `{ id = "CS1" }` | Bat dau cinematic lightweight tren client |
+| `OnCutsceneFinished` | Client -> Server | `{ id = "CS1" }` | Bao server cutscene da ket thuc; server validate session/quest truoc khi tiep tuc |
 
 `OnInteractionPrompt` dang ton tai trong ReplicatedStorage nhung khong phai event chinh cua `StoryClientMVP` hien tai.
 
@@ -248,7 +265,7 @@ Attributes dung chung:
 
 | Attribute | Vi du | Muc dich |
 |---|---|---|
-| `GreenAgainV5` | `true` | Danh dau object thuoc runtime V5 |
+| `GreenAgainV6` | `true` | Danh dau object thuoc runtime V6 |
 | `GreenAgainKind` | `NPC`, `Location`, `Trash`, `SortingBin`, `Placement`, `Decoration` | Routing interaction |
 | `InteractId` | `npc_BacXanh`, `loc_Hub`, `trash_Q1_03_CleanEntrance_1` | Id client gui len server |
 | `ObjectName` | `Bac Xanh`, `Cong thoat nuoc cuoi xom` | Ten hien thi tren prompt/marker |
@@ -275,6 +292,7 @@ Player gan object interactable
 -> Client gui OnInteractRequested(interactId)
 -> Server tim object bang InteractId
 -> Server check Interactable va GreenAgainKind
+-> Neu dang co cutscene session thi server bo qua interaction
 -> handleNpc / handleTrash / handleSorting / handlePlacement / handleLocation
 -> Server update state
 -> Server fire Objective/Dialogue/Toast/Notebook/EndText
@@ -295,13 +313,14 @@ Primary responsibility:
 
 - Wait `ReplicatedStorage.GreenAgainProject.Events_To_Add`.
 - Tao `PlayerGui.GreenAgainStoryHUD` bang code.
-- An UI cu `GreenAgainHUD_V5` va text `Dang noi map`.
+- An UI cu `GreenAgainHUD_V6` va text `Dang noi map`.
 - Hien quest tracker, interaction prompt, touch button, toast, notebook book/panel.
 - Hien dialogue panel, progress text, continue button, 2 choice buttons.
 - Tao marker objective dang hinh thoi xanh nho, khong co distance text.
 - Chi bat story UI khi player da roi menu va o gan main map activation zone.
 - Gui `OnInteractRequested` khi player nhan E/click touch interact.
 - Gui `OnDialogueClose` khi dialogue ket thuc.
+- Chay cutscene cinematic lightweight tu `OnCutsceneStart`: hide HUD/marker/notebook, camera `Scriptable`, letterbox/subtitle, tween camera, restore camera/UI, gui `OnCutsceneFinished`.
 - Cache interactable targets theo `InteractId` va throttle nearby checks de tranh CPU spike tren map lon.
 
 ### 5.1 UI Created At Runtime
@@ -321,6 +340,11 @@ PlayerGui.GreenAgainStoryHUD
 |   +-- LeftPage
 |   +-- RightPage
 |   +-- Spine
++-- CutsceneOverlay
+|   +-- TopBar
+|   +-- BottomBar
+|   +-- Title
+|   +-- Subtitle
 +-- DialoguePanel
 |   +-- Speaker
 |   +-- Progress
@@ -472,7 +496,7 @@ Responsibilities:
 - Khi PLAY:
   - Tao `TransitionOverlay` rieng de fade khong bi destroy som.
   - Unbind `MenuLoop`.
-  - Move character ve `SpawnLocation` trong root V5 hoac fallback.
+  - Move character ve `SpawnLocation` trong root V6 hoac fallback.
   - Set `player:SetAttribute("GreenAgainMenuFinished", true)`.
   - Cleanup pending ClickToMove path tu nut PLAY 3D.
   - Unanchor character va restore camera/humanoid.
@@ -632,7 +656,7 @@ Rules:
 
 ## 10. Workspace Map And Runtime Folders
 
-Main V5 root:
+Main V6 root:
 
 ```text
 Workspace["=== GREEN AGAIN V5 ==="]
@@ -670,6 +694,9 @@ Story-critical map objects:
 | `River` | `NPC_OngSau_Marker` | Bo song cho Ong Sau |
 | `DrainMarker` | `OngNuoc_XaThai_Marker` | Cong thoat nuoc cuoi xom marker |
 | `Drain` | `SYSTEMS_REVIEW.Doors_Vehicles_And_AssetScripts.OngThoatNuoc` | Cong thoat nuoc cuoi xom |
+| `ResidentialLane` | runtime invisible anchor on `PROPS_AND_INTERACTABLES_REVIEW.Loose_Props.duong` | Ngo dan cu sau mua, `(250.00, 48.90, -3370.00)` |
+| `SmallLivesCorner` | runtime invisible anchor on the same lane | Goc song nho, `(246.00, 48.90, -3385.00)` |
+| `TreePlantingZone` | runtime route point | Cay non ngo dan cu, `(250.00, 48.90, -3370.00)` |
 
 NPCs:
 
@@ -696,14 +723,14 @@ Asset library folders:
 
 | Folder | Owner | Muc dich |
 |---|---|---|
-| `Workspace.Trash` | Green Again V5 asset library | Source templates for trash collectibles, sorting/bin props, piles, large debris, and preserved scene dressing |
+| `Workspace.Trash` | Green Again V6 asset library | Source templates for trash collectibles, sorting/bin props, piles, large debris, and preserved scene dressing |
 
 ## 11. Trash Asset Library
 
 Detailed source doc:
 
 ```text
-docs/GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md
+docs/V6/GREEN_AGAIN_V6_TRASH_ASSET_LIBRARY.md
 ```
 
 Current root:
@@ -781,7 +808,7 @@ Sorting minigame rule:
 - Server keeps both aggregate counts in `bag[TrashCategory]` and per-item visual data in `bagItems`.
 - Current quest cleanup categories map as `Plastic`, `Metal`, `Paper` -> `Recycle`; `Mixed` -> `Mixed`.
 - `Organic` and `Hazardous` bins are visible and supported by the minigame/server mapping for future items, but current main quest cleanup mappings do not yet place those categories in the bag.
-- If changing cleanup visuals, update `TRASH_ASSET_VARIANTS` and `docs/GREEN_AGAIN_V5_TRASH_ASSET_LIBRARY.md` together.
+- If changing cleanup visuals, update `TRASH_ASSET_VARIANTS` and `docs/V6/GREEN_AGAIN_V6_TRASH_ASSET_LIBRARY.md` together.
 
 ## 12. Imported Asset Scripts
 
@@ -800,19 +827,33 @@ Examples observed:
 
 Rule:
 
-- Khong xem cac asset script nay la game architecture chinh cua V5.
+- Khong xem cac asset script nay la game architecture chinh cua V6.
 - Khong sua hang loat asset script neu task la story/quest/HUD.
 - Trong `Workspace.Trash`, imported asset scripts should stay disabled unless their behavior is explicitly needed and documented.
 - Neu mot asset script gay loi runtime, ghi ro path va log, sua dung script do, khong refactor lan sang story runtime.
 - Neu chuyen asset thanh gameplay-critical object, cap nhat file nay va implementation summary.
 
+## 12.5 Temporary Ch5 NPC Placeholders
+
+Current runtime still targets `Workspace["=== GREEN AGAIN V5 ==="]`. Until real models for Cô Hạnh and Em Phúc are added under `MAP_ROUTE.06_NPCs`, `StoryRuntimeMVP.getNpc()` creates visible placeholder NPC models under `Workspace.GreenAgainV5_ClientAnchors`.
+
+Rules:
+
+- Placeholder names are `NPC_CoHanh` and `NPC_EmPhuc`.
+- The model itself carries `GreenAgainKind="NPC"`, `NpcId`, `InteractId`, `ObjectName`, `Action`, and `Interactable`; child visual parts do not carry the interact id.
+- Placeholder visuals use simple anchored parts plus a nameplate, not invisible-only anchors.
+- Default residential-lane positions are `CoHanh = Vector3.new(248.0, 51.15, -3370.0)` and `EmPhuc = Vector3.new(252.0, 51.15, -3370.0)`.
+- `Q5_05_ResidentialAfterRain` stages both placeholders on the residential lane; `CoHanh` is the interactable quest target.
+- `Q5_06_CareSmallLives` stages both placeholders beside the placement markers at `(242.0, 51.15, -3382.0)` and `(250.0, 51.15, -3382.0)` so they do not overlap the care-corner markers.
+- Runtime verification: placeholder bottom Y was `48.350` against road ground `48.345` in both Q5.05 and Q5.06.
+
 ## 13. How To Add A New Quest Step
 
 Truoc khi code:
 
-1. Xac nhan quest trong `GDD_GreenAgain_v5_QUEST_FLOW.md`.
-2. Xac nhan location trong `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md`.
-3. Xac nhan dialogue trong `GDD_GreenAgain_NPC_DIALOGUE_v5.md`.
+1. Xac nhan quest trong `GDD_GreenAgain_v6_QUEST_FLOW.md`.
+2. Xac nhan location trong `GDD_GreenAgain_v6_CURRENT_MAP_DRAFT.md`.
+3. Xac nhan dialogue trong `GDD_GreenAgain_NPC_DIALOGUE_v6.md`.
 4. Viet plan logic/cau truc code ngan.
 
 Trong code:
@@ -834,17 +875,6 @@ Khong lam:
 - Khong tao duplicate marker/HUD.
 - Khong spawn placeholder map location neu object that da ton tai.
 - Khong bo qua dialogue chi de di nhanh hon.
-
-### Temporary Ch5 NPC Placeholders
-
-The active runtime still uses the V5 map root while V6 expansion quests are being added. If real models for Cô Hạnh and Em Phúc are missing from `MAP_ROUTE.06_NPCs`, `StoryRuntimeMVP.getNpc()` creates temporary visible placeholder NPC models under `Workspace.GreenAgainV5_ClientAnchors`.
-
-- Placeholder names: `NPC_CoHanh`, `NPC_EmPhuc`.
-- The model carries `GreenAgainKind="NPC"`, `NpcId`, `InteractId`, `ObjectName`, `Action`, and `Interactable`; child visual parts should not carry the interact id.
-- Use visible simple body/head/nameplate placeholders, not invisible-only anchors, so playtesters can see the new Ch5 characters.
-- Default residential-lane positions: `CoHanh = Vector3.new(248.0, 51.15, -3370.0)`, `EmPhuc = Vector3.new(252.0, 51.15, -3370.0)`.
-- `Q5_05_ResidentialAfterRain` stages both placeholders on the residential lane; `CoHanh` is the interactable quest target.
-- `Q5_06_CareSmallLives` stages them beside the care-corner placement markers at `(242.0, 51.15, -3382.0)` and `(250.0, 51.15, -3382.0)`.
 
 ## 14. How To Add A New Gameplay Activity
 

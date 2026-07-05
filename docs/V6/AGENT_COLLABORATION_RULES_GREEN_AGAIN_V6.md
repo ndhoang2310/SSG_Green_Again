@@ -1,29 +1,60 @@
-# Green Again V5 - Agent Collaboration Rules
+# Green Again V6 - Agent Collaboration Rules
 
-Date: 2026-07-03
+Date: 2026-07-05
 
-Purpose: this file is the shared operating rulebook for Codex and any other agent working on the Green Again V5 Roblox project. Every agent should read this before editing the game, docs, or Roblox Studio workspace.
+Purpose: this file is the shared operating rulebook for Codex and any other agent working on the Green Again V6 Roblox project. Every agent should read this before editing the game, docs, or Roblox Studio workspace.
 
 ## 1. Single Source Of Truth
 
 Use these documents as the current source of truth, in this priority order:
 
-1. `docs/GREEN_AGAIN_V5_FULL_GAME_DOCUMENT_AND_BUILD_GUIDE.md`
-2. `docs/GREEN_AGAIN_V5_MVP_IMPLEMENTATION_SUMMARY.md`
-3. `docs/GDD_GreenAgain_v5_QUEST_FLOW.md`
-4. `docs/GDD_GreenAgain_NPC_DIALOGUE_v5.md`
-5. `docs/GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md`
-6. `docs/GDD_GreenAgain_v5_STORY_BIBLE.md`
-7. `docs/GDD_GreenAgain_v5_CUTSCENE_SCRIPT.md`
+1. `docs/V6/GREEN_AGAIN_V6_FULL_GAME_DOCUMENT_AND_BUILD_GUIDE.md`
+2. `docs/V6/GREEN_AGAIN_V6_MVP_IMPLEMENTATION_SUMMARY.md`
+3. `docs/V6/GREEN_AGAIN_V6_ROBLOX_CODE_STRUCTURE.md`
+4. `docs/V6/GDD_GreenAgain_v6_QUEST_FLOW.md`
+5. `docs/V6/GDD_GreenAgain_NPC_DIALOGUE_v6.md`
+6. `docs/V6/GDD_GreenAgain_v6_CURRENT_MAP_DRAFT.md`
+7. `docs/V6/GDD_GreenAgain_v6_STORY_BIBLE.md`
+8. `docs/V6/GDD_GreenAgain_v6_CUTSCENE_SCRIPT.md`
 
 Do not use `docs/legacy_v4/` for new implementation unless the user explicitly asks for a v4 reference.
 
 If docs conflict with the current Studio build, inspect the Studio build and document the difference before changing behavior.
 
-## 2. Current Runtime Ownership
+## 2. Pre-Code Planning Gate
+
+Before writing or editing Roblox code, every agent must do a short planning pass.
+
+Required reading before code:
+
+- `docs/V6/AGENT_COLLABORATION_RULES_GREEN_AGAIN_V6.md`
+- `docs/V6/GREEN_AGAIN_V6_FULL_GAME_DOCUMENT_AND_BUILD_GUIDE.md`
+- `docs/V6/GREEN_AGAIN_V6_MVP_IMPLEMENTATION_SUMMARY.md`
+- `docs/V6/GREEN_AGAIN_V6_ROBLOX_CODE_STRUCTURE.md`
+- The specific quest/dialogue/map/cutscene doc related to the change.
+
+Required plan before touching scripts:
+
+- What gameplay/story logic is being changed.
+- Which existing script owns that behavior.
+- Whether the change belongs in `StoryRuntimeMVP`, `StoryClientMVP`, `MainMenuController`, or a utility script.
+- What data tables, RemoteEvents, Attributes, UI surfaces, and runtime folders are affected.
+- How quest progression will start, update, complete, and recover from invalid interaction.
+- What Play-mode tests will prove the change works.
+
+Do not create real code first and explain architecture afterward. Plan the logic and code structure first, then implement.
+
+## 3. Current Runtime Ownership
+
+Important V6 implementation target:
+
+- V6 is currently implemented as an expansion on the existing map root `Workspace["=== GREEN AGAIN V5 ==="]`.
+- Do not rename the root to `=== GREEN AGAIN V6 ===` in this pass.
+- Future docs may describe a V6 root as a migration target only; active gameplay edits should continue to use the current V5 root and MVP scripts unless the user explicitly asks for a root migration.
 
 The current active MVP path is:
 
+- Startup loader: `game.ReplicatedFirst.GreenAgainStartupLoader`
 - Server: `game.ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP`
 - Client: `game.StarterPlayer.StarterPlayerScripts.StoryClientMVP`
 - Sprint: `game.StarterPlayer.StarterCharacterScripts.SprintStaminaScript`
@@ -31,21 +62,24 @@ The current active MVP path is:
 
 Deleted or obsolete systems must not be recreated:
 
-- `GreenAgainHUD_V5`
+- `GreenAgainHUD_V6`
 - `GreenAgainObjectiveClient`
 - `MapWiringBootstrap`
-- Old connection label text: `Đang nối map Green Again V5...`
+- Old connection label text: `Đang nối map Green Again V6...`
 
 Before adding a new script, first check whether the behavior belongs in the existing active MVP scripts.
+
+For code ownership details, read `docs/V6/GREEN_AGAIN_V6_ROBLOX_CODE_STRUCTURE.md`.
 
 Main menu ownership rule:
 
 - `MainMenuGui` / `MainMenuController` is currently being worked on by another team member.
 - Do not rewrite, delete, or visually redesign it unless the user explicitly assigns that task.
+- Keep `GreenAgainStartupLoader` as a separate `ReplicatedFirst` guard unless the menu owner explicitly takes over startup loading.
 - Story HUD and objective marker work should remain in `StoryClientMVP` and should not assume the menu has already been destroyed.
 - If touching startup flow, verify that the menu still locks controls, restores controls after PLAY, and does not reintroduce duplicate HUD.
 
-## 3. Multi-Agent Safety Rules
+## 4. Multi-Agent Safety Rules
 
 - Never revert another agent's or the user's changes unless the user explicitly asks.
 - Before editing, check current state with `git status --short` and inspect the target script/doc.
@@ -54,9 +88,9 @@ Main menu ownership rule:
 - Do not rename quest ids, object names, or paths casually. If a rename is necessary, update every reference and record it in the summary doc.
 - Do not delete Studio objects unless the user explicitly asks.
 - Prefer adding small, documented runtime systems over large rewrites.
-- At the end of work, update `docs/GREEN_AGAIN_V5_MVP_IMPLEMENTATION_SUMMARY.md` with meaningful behavior changes and tests.
+- At the end of work, update `docs/V6/GREEN_AGAIN_V6_MVP_IMPLEMENTATION_SUMMARY.md` with meaningful behavior changes and tests.
 
-## 4. Roblox Studio Rules
+## 5. Roblox Studio Rules
 
 - Always verify Studio mode before edits. If Play mode is running, stop it before editing persistent scripts.
 - After implementation, run Play mode when possible and check the console.
@@ -65,7 +99,7 @@ Main menu ownership rule:
 - Do not create placeholder locations for already existing map locations.
 - Runtime interaction markers, sorting bins, trash, planting markers, and temporary gameplay objects are allowed when they are clearly gameplay affordances, not fake map locations.
 
-## 5. Map And Object Rules
+## 6. Map And Object Rules
 
 Use real objects already in `Workspace["=== GREEN AGAIN V5 ==="]`.
 
@@ -75,16 +109,24 @@ Important object mappings:
 - Nhà văn hóa: `NhaVanHoa_ThonNoiChuan`
 - Điểm tập kết rác: `DiemTapKetRacThai_ThonVenSong`
 - Tạp hóa Cô Tư: `TapHoaCoTu_HouseOnly_Rural`
-- Sân bóng: `KhungThanh_01_Marker`, `KhungThanh_02_Marker`
+- Sân bóng: map thật nằm quanh `KhungThanh_01_Marker` / `KhungThanh_02_Marker` nếu còn tồn tại; Chapter 3 interaction dùng runtime invisible anchor `FieldCenter` ở trung tâm sân, không phụ thuộc holder khung thành.
 - Cống thật: `SYSTEMS_REVIEW.Doors_Vehicles_And_AssetScripts.OngThoatNuoc`
+- V6 planned residential anchors:
+  - `ResidentialLane`: runtime anchor on the residential concrete lane `duong`, near house cluster, for `Q5_05_ResidentialAfterRain`
+  - `SmallLivesCorner`: runtime anchor on the same lane near the wall/tree edge for `Q5_06_CareSmallLives`
+  - `TreePlantingZone`: runtime planting route for `Q5_07_NeighborhoodPlanting`
 
 Current important gameplay coordinates:
 
 - Nhà văn hóa hub: `(284.24, 51.85, -3570.00)`
-- Điểm tập kết rác: `(93.57, 58.45, -3533.43)`
+- Điểm tập kết rác / `TrashSite`: `(93.57, 51.52, -3533.43)` for gameplay marker/interact hitbox. The visible sorting station is higher/around this area, but runtime interaction should stay ground-reachable.
 - Tạp hóa: `(78.78, 49.45, -3187.65)`
 - Sân bóng A: `(-67.07, 51.55, -3225.84)`
 - Sân bóng B: `(-51.72, 56.05, -3390.71)`
+- Trung tâm sân bóng / `FieldCenter`: `(-59.66, 55.45, -3309.73)`
+- Ngõ dân cư / `ResidentialLane`: `(250.00, 48.90, -3370.00)` on `PROPS_AND_INTERACTABLES_REVIEW.Loose_Props.duong`
+- Góc sống nhỏ / `SmallLivesCorner`: `(246.00, 48.90, -3385.00)` on the same lane
+- Khu trồng cây dân cư / `TreePlantingZone`: `(250.00, 48.90, -3370.00)`
 - Bờ sông Ch4: `(-160.482, 51.689, -3571.701)`
 - Gần cống Ch4: `(-198.184, 51.689, -3502.522)`
 - Gần bờ sông Ch4: `(-204.840, 54.054, -3481.669)`
@@ -92,9 +134,9 @@ Current important gameplay coordinates:
 
 If the user provides a new coordinate, prefer using it directly and record it in the summary.
 
-## 6. Story And Quest Rules
+## 7. Story And Quest Rules
 
-Green Again V5 is story-first. Do not reduce it to a generic cleanup simulator.
+Green Again V6 is story-first. Do not reduce it to a generic cleanup simulator.
 
 Keep the intended route:
 
@@ -104,9 +146,12 @@ Keep the intended route:
 4. Sân bóng / Anh Tùng / Bé Na
 5. Ông Sáu / bờ sông
 6. Cống thoát nước
-7. Community prevention
-8. Ending at Nhà văn hóa
-9. Post-ending free roam
+7. Community gather
+8. Khu dân cư sau mưa / Cô Hạnh / Em Phúc
+9. Góc sống nhỏ cho động vật bằng cleanup + placement nhẹ
+10. Trồng cây non / phòng ngừa
+11. Ending at Nhà văn hóa
+12. Post-ending free roam
 
 Current expanded MVP loops:
 
@@ -114,14 +159,18 @@ Current expanded MVP loops:
 - Cleanup activates only the current quest's trash.
 - Collected trash goes into a runtime bag by category.
 - Sorting quests spawn bins at the real trash collection point.
-- Final prevention includes placing a bin, placing a reminder sign, and planting a tree near the village area beside Nhà văn hóa.
+- Final prevention in v6 includes residential impact, small-lives care, and tree planting:
+  - `Q5_05_ResidentialAfterRain`
+  - `Q5_06_CareSmallLives`
+  - `Q5_07_NeighborhoodPlanting`
+  - `Q5_08_ReturnToCommunityHouse`
 
 Do not skip dialogue beats to speed up implementation. If a gameplay loop is added, place it between story beats where it makes narrative sense.
 
-## 7. Dialogue Rules
+## 8. Dialogue Rules
 
 - Use Vietnamese dialogue.
-- Use existing V5 dialogue docs first.
+- Use existing V6 dialogue docs first.
 - New dialogue should match the tone: grounded, gentle, community-focused, not preachy.
 - Choices must not break progression.
 - Choice UI rules:
@@ -131,7 +180,7 @@ Do not skip dialogue beats to speed up implementation. If a gameplay loop is add
   - Closing a dialogue should complete a quest only once.
 - Avoid duplicate reopen bugs by using debounce and server-side dialogue sessions.
 
-## 8. UI/UX Rules
+## 9. UI/UX Rules
 
 - Marker shows only the current objective.
 - Marker is a small green diamond plus name.
@@ -141,8 +190,9 @@ Do not skip dialogue beats to speed up implementation. If a gameplay loop is add
 - Do not reintroduce the old top-left connection text.
 - Keep UI compact and readable.
 - Do not add tutorial walls or large explanatory panels unless the user asks.
+- Do not update prompt text/visibility every frame if the target/text did not change.
 
-## 9. Gameplay Rules
+## 10. Gameplay Rules
 
 Allowed MVP gameplay systems:
 
@@ -151,6 +201,7 @@ Allowed MVP gameplay systems:
 - Sort trash by category at the collection point.
 - Place bins/signs/reminders.
 - Plant trees.
+- Care for a small lives corner using cleanup, placement, visual state change, or dialogue reaction.
 - Gather community members.
 - Lightweight cutscene/fade/focus moments.
 
@@ -160,7 +211,9 @@ Avoid heavy systems unless requested:
 - Full inventory UI.
 - Economy/rewards.
 - Combat or unrelated movement mechanics.
+- Animal AI, rescue simulation, pathfinding, feeding systems, or complex pet behavior unless explicitly requested.
 - Large procedural systems.
+- Uncached per-frame scans over Workspace or large descendants.
 
 If adding a new gameplay activity, define:
 
@@ -171,7 +224,7 @@ If adding a new gameplay activity, define:
 - How completion is counted.
 - How it affects story progression.
 
-## 10. Assets And Models
+## 11. Assets And Models
 
 - Prefer real map objects already in the workspace.
 - Runtime generated trash or markers are allowed as gameplay props.
@@ -180,7 +233,7 @@ If adding a new gameplay activity, define:
 - If asset import fails due to permissions, keep the native fallback and report it.
 - Do not replace user-made map objects without permission.
 
-## 11. Testing Checklist
+## 12. Testing Checklist
 
 For every meaningful implementation, test as much as possible:
 
@@ -195,24 +248,38 @@ For every meaningful implementation, test as much as possible:
 - Runtime props spawn at grounded, believable positions.
 - Cống is not interactable before its quest.
 - Post-ending free roam hides tracker/marker.
+- Normal gameplay CPU does not spike compared with dialogue-open state.
+- If a change touches interaction scan/UI prompt, verify it uses caching/throttling rather than `workspace:GetDescendants()` every frame.
 
 Record test results in the summary doc.
 
-## 12. Documentation Rules
+## 13. Performance Rules
+
+- Never add `workspace:GetDescendants()` or other large tree scans inside `Heartbeat`, `RenderStepped`, or per-frame UI loops.
+- Interactable detection belongs in `StoryClientMVP`'s cached target list using `InteractId`, `DescendantAdded`, `DescendantRemoving`, and throttled nearby checks.
+- Do not set `Humanoid.WalkSpeed`, UI text, UI visibility, marker contents, or prompt strings every frame if the value did not change.
+- Dialogue should not be the only state where the game runs smoothly. If performance improves while dialogue is open, inspect code paths skipped by `dialogueOpen`.
+- If a performance fix changes runtime code structure, update both `GREEN_AGAIN_V6_MVP_IMPLEMENTATION_SUMMARY.md` and `GREEN_AGAIN_V6_ROBLOX_CODE_STRUCTURE.md`.
+
+## 14. Documentation Rules
 
 When changing behavior, update:
 
-- `docs/GREEN_AGAIN_V5_MVP_IMPLEMENTATION_SUMMARY.md`
+- `docs/V6/GREEN_AGAIN_V6_MVP_IMPLEMENTATION_SUMMARY.md`
 
 When changing collaboration process, update:
 
-- `docs/AGENT_COLLABORATION_RULES_GREEN_AGAIN_V5.md`
+- `docs/V6/AGENT_COLLABORATION_RULES_GREEN_AGAIN_V6.md`
+
+When changing Roblox code structure, ownership, RemoteEvents, Attributes, or runtime folders, update:
+
+- `docs/V6/GREEN_AGAIN_V6_ROBLOX_CODE_STRUCTURE.md`
 
 When adding a major new design system, create a focused doc under `docs/` and link it from the summary.
 
 Keep docs in Vietnamese when they are user-facing game design docs. This collaboration rulebook can stay in English for agent clarity, but Vietnamese notes are welcome when describing user-facing behavior.
 
-## 13. Handoff Format
+## 15. Handoff Format
 
 Every agent should end with a concise handoff:
 
@@ -228,7 +295,7 @@ If blocked, say exactly what is missing, for example:
 - Need asset id/link.
 - Need confirmation before deleting/replacing an object.
 
-## 14. Open Questions To Ask The User When Needed
+## 16. Open Questions To Ask The User When Needed
 
 Ask before making risky assumptions about:
 
@@ -238,4 +305,4 @@ Ask before making risky assumptions about:
 - Whether dialogue should branch meaningfully or only reflect player tone.
 - Whether a new gameplay loop should be mandatory in the main quest or optional in free roam.
 
-Do not ask if the answer can be safely inferred from the current V5 docs and workspace.
+Do not ask if the answer can be safely inferred from the current V6 docs and workspace.

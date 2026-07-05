@@ -107,7 +107,7 @@ MVP là một **story-first vertical slice** — một lượt chơi liền mạ
 |---|---|---|
 | **Startup loader** | `ReplicatedFirst.GreenAgainStartupLoader` | Màn loading đầu game có logo Green Again, đợi waiting screen render xong rồi fade |
 | **Server runtime** | `ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP` | Script server chính điều khiển story, quest, dialogue, interaction routing, cleanup spawning, placement, drain, community gather, notebook, ending |
-| **Client script** | `StarterPlayer.StarterPlayerScripts.StoryClientMVP` | Script client chính xử lý HUD, marker, dialogue UI, sorting minigame, interaction prompt, feedback toast, notebook toast, ending overlay |
+| **Client script** | `StarterPlayer.StarterPlayerScripts.StoryClientMVP` | Script client chính xử lý HUD, marker, dialogue UI, sorting minigame, interaction prompt, feedback toast, notebook book/panel, ending overlay |
 | **Sprint script** | `StarterPlayer.StarterCharacterScripts.SprintStaminaScript` | Giữ logic sprint (Shift chạy nhanh), đã xóa stamina bar UI |
 
 ### 3.2 Script/UI đã xóa
@@ -130,7 +130,7 @@ MVP HUD được tạo bởi `StoryClientMVP`, bao gồm:
 - Interaction prompt (`[E] Action - Object`).
 - Dialogue panel (speaker, line progress `1 / 4`, continue/choice buttons).
 - Feedback toast.
-- Notebook toast.
+- Notebook book/panel: mỗi chapter unlock một trang, có thể mở lại bằng nút `Nhật ký` hoặc phím `N`.
 - Sorting minigame: kéo từng món rác trong túi vào thùng `Nguy hiểm`, `Tái chế`, `Hữu cơ`, hoặc `Còn lại`; mỗi món là card visual render model rác 3D từ `Workspace.Trash` bằng `ViewportFrame`.
 - Ending overlay.
 
@@ -156,7 +156,7 @@ Hệ thống bao gồm:
 - Runtime trash spawning.
 - Sorting quests mở mini game kéo-thả; server validate từng item trước khi complete quest.
 - Runtime placement markers.
-- Notebook toast (1 lần/chapter).
+- Notebook book page unlock (1 lần/chapter).
 - Ending text.
 
 ### 3.6 Dialogue system (Đã build)
@@ -233,7 +233,7 @@ Runtime status:
 |---|---|---|---|---|---|
 | `BacXanh` | `MAP_ROUTE.06_NPCs.BacXanh` | Bác Xanh | Mentor, người giữ ký ức Ven Sông, dẫn player qua story | Q1_02, transitions, Q5_05, ending | NPC chính, interactable nhiều nhất |
 | `ChiLan` | `MAP_ROUTE.06_NPCs.ChiLan` | Chị Lan | Phụ trách phân loại rác, tổ môi trường | Q1_04, Q5_02-03, ending | Đứng gần Điểm tập kết rác |
-| `CoTu` | `MAP_ROUTE.06_NPCs.CoTu` | Cô Tư | Chủ tạp hóa, nguồn rác sinh hoạt | Q2_01-04, Q5_03, ending | Đứng gần tạp hóa |
+| `CoTu` | `MAP_ROUTE.06_NPCs.CoTu` | Cô Tư | Chủ tạp hóa, nguồn rác sinh hoạt | Q2_01, Q2_05, Q5_04, ending | Đứng gần tạp hóa |
 | `AnhTung` | `MAP_ROUTE.06_NPCs.AnhTung` | Anh Tùng | Thanh niên chơi bóng, thói quen "lát dọn" | Q3_01-05, Q5_03, ending | Đứng ở sân bóng |
 | `BeNa` | `MAP_ROUTE.06_NPCs.BeNa` | Bé Na | Em nhỏ, đại diện thế hệ sau | Q3_02-04, ending | Gần sân bóng |
 | `OngSau` | `MAP_ROUTE.06_NPCs.OngSau` | Ông Sáu | Người sống lâu bờ sông, hoài niệm | Q4_01-03, Q5_03, ending | Gần bờ sông |
@@ -244,7 +244,7 @@ Runtime status:
 |---|---|---|---|---|---|
 | `NhaVanHoa_ThonNoiChuan` | Trong `MAP_ROUTE` hoặc root V5 | Nhà văn hóa thôn Ven Sông | Hub khởi đầu, nơi gặp Bác Xanh, ending | Q1_01, Q1_02, Q5_05, ending | Hub trung tâm |
 | `DiemTapKetRacThai_ThonVenSong` | Trong `MAP_ROUTE` | Điểm tập kết rác thôn | Tutorial phân loại, nơi Chị Lan giải thích | Q1_04 | Bên phải/hơi trên Nhà văn hóa |
-| `TapHoaCoTu_HouseOnly_Rural` | Trong `MAP_ROUTE` | Tạp hóa Cô Tư | Nơi kể chuyện nhu cầu tăng, bao bì tăng | Q2_01-04 | Nối làng với sân bóng |
+| `TapHoaCoTu_HouseOnly_Rural` | Trong `MAP_ROUTE` | Tạp hóa Cô Tư | Nơi kể chuyện nhu cầu tăng, bao bì tăng | Q2_01-06 | Nối làng với sân bóng |
 | `KhungThanh_01_Marker` | Trong `MAP_ROUTE` | Khung thành sân bóng (1) | Đánh dấu khu vực sân bóng | Q3_01-05 | Dùng cho sân bóng thôn Ven Sông |
 | `KhungThanh_02_Marker` | Trong `MAP_ROUTE` | Khung thành sân bóng (2) | Đánh dấu khu vực sân bóng | Q3_01-05 | Cặp với marker 01 |
 | `NPC_OngSau_Marker` | Trong `MAP_ROUTE` | Vị trí Ông Sáu | Đánh dấu khu bờ sông Ông Sáu | Q4_01-03 | Gần sông |
@@ -418,14 +418,31 @@ Runtime status:
 | **Dialogue** | Cô Tư during quest lines |
 | **Marker** | Marker trên area |
 | **Runtime object** | Runtime trash |
-| **Quest tiếp theo** | `Q2_04_GroceryCommitment` |
+| **Quest tiếp theo** | `Q2_04_SortGroceryTrash` |
 | **Notes** | — |
 
-#### Q2_04_GroceryCommitment
+#### Q2_04_SortGroceryTrash
 
 | Mục | Chi tiết |
 |---|---|
-| **Quest ID** | `Q2_04_GroceryCommitment` |
+| **Quest ID** | `Q2_04_SortGroceryTrash` |
+| **Chapter** | 2 |
+| **Title** | Đem Rác Về Đúng Chỗ |
+| **Objective** | Phân loại rác tạp hóa ở điểm tập kết |
+| **Target** | `TrashSite` |
+| **Interaction type** | Sorting minigame |
+| **Completion condition** | Sorting complete |
+| **Dialogue** | — |
+| **Marker** | Marker trên điểm tập kết / sorting hitbox |
+| **Runtime object** | Invisible sorting hitboxes; static scene bins are the visible bins |
+| **Quest tiếp theo** | `Q2_05_GroceryCommitment` |
+| **Notes** | Uses the same drag-and-drop sorting UI as Q1 |
+
+#### Q2_05_GroceryCommitment
+
+| Mục | Chi tiết |
+|---|---|
+| **Quest ID** | `Q2_05_GroceryCommitment` |
 | **Chapter** | 2 |
 | **Title** | Một Chỗ Để Bỏ Rác |
 | **Objective** | Nói lại với Cô Tư |
@@ -435,8 +452,25 @@ Runtime status:
 | **Dialogue** | `CoTu_Ch2_After` — Cô Tư after cleanup + commitment (xem Section 6) |
 | **Marker** | Marker trên Cô Tư |
 | **Runtime object** | Có thể thêm visual thùng rác gần tạp hóa |
+| **Quest tiếp theo** | `Q2_06_TalkToBacXanh` |
+| **Notes** | Cô Tư commitment only; Bác Xanh transition is separated into the next quest |
+
+#### Q2_06_TalkToBacXanh
+
+| Mục | Chi tiết |
+|---|---|
+| **Quest ID** | `Q2_06_TalkToBacXanh` |
+| **Chapter** | 2 |
+| **Title** | Người Cùng Làm |
+| **Objective** | Gặp Bác Xanh ngoài tiệm tạp hóa |
+| **Target** | `BacXanh` staged near grocery |
+| **Interaction type** | Talk NPC |
+| **Completion condition** | Dialogue complete |
+| **Dialogue** | `BacXanh_Q2_After` — transition from grocery story to football field |
+| **Marker** | Marker trên Bác Xanh |
+| **Runtime object** | NPC stage position `Vector3.new(114.281, 67.989, -3310.235)` |
 | **Quest tiếp theo** | `Q3_01_ToFootballField` |
-| **Notes** | Notebook entry Ch2 fires |
+| **Notes** | Notebook entry Ch2 fires here |
 
 ### 5.3 Chapter 3 — Sau Trận Bóng
 
@@ -492,14 +526,31 @@ Runtime status:
 | **Dialogue** | Anh Tùng during quest: "Sau khung thành còn mấy chai đó." |
 | **Marker** | Marker trên area sân bóng |
 | **Runtime object** | Runtime trash: chai nước, túi snack, ly nhựa |
-| **Quest tiếp theo** | `Q3_04_BeNaMoment` |
+| **Quest tiếp theo** | `Q3_04_SortFieldTrash` |
 | **Notes** | Trash gần ghế ngồi + sau khung thành |
 
-#### Q3_04_BeNaMoment
+#### Q3_04_SortFieldTrash
 
 | Mục | Chi tiết |
 |---|---|
-| **Quest ID** | `Q3_04_BeNaMoment` |
+| **Quest ID** | `Q3_04_SortFieldTrash` |
+| **Chapter** | 3 |
+| **Title** | Chai Sau Trận |
+| **Objective** | Phân loại rác sân bóng ở điểm tập kết |
+| **Target** | `TrashSite` |
+| **Interaction type** | Sorting minigame |
+| **Completion condition** | Sorting complete |
+| **Dialogue** | — |
+| **Marker** | Marker trên điểm tập kết / sorting hitbox |
+| **Runtime object** | Invisible sorting hitboxes; static scene bins are the visible bins |
+| **Quest tiếp theo** | `Q3_05_BeNaMoment` |
+| **Notes** | Uses the picked field trash bag items |
+
+#### Q3_05_BeNaMoment
+
+| Mục | Chi tiết |
+|---|---|
+| **Quest ID** | `Q3_05_BeNaMoment` |
 | **Chapter** | 3 |
 | **Title** | Chỗ Chơi Của Bé Na |
 | **Objective** | Nói chuyện với Bé Na |
@@ -509,17 +560,17 @@ Runtime status:
 | **Dialogue** | `BeNa_Ch3_After` — Bé Na after sân bóng clean (xem Section 6) |
 | **Marker** | Marker trên Bé Na |
 | **Runtime object** | Không |
-| **Quest tiếp theo** | `Q3_05_FieldReminder` |
+| **Quest tiếp theo** | `Q3_06_FieldReminder` |
 | **Notes** | Cảm xúc beat — Bé Na tạo emotional turn |
 
-#### Q3_05_FieldReminder
+#### Q3_06_FieldReminder
 
 | Mục | Chi tiết |
 |---|---|
-| **Quest ID** | `Q3_05_FieldReminder` |
+| **Quest ID** | `Q3_06_FieldReminder` |
 | **Chapter** | 3 |
 | **Title** | Nhắc Nhau Sau Trận |
-| **Objective** | Đặt/đồng ý biển hoặc thùng gần sân |
+| **Objective** | Đặt nhắc nhở ở trung tâm sân bóng |
 | **Target** | Placement zone gần sân bóng |
 | **Interaction type** | Placement/interact |
 | **Completion condition** | Placement/interact complete |
@@ -566,14 +617,31 @@ Runtime status:
 | **Dialogue** | Ông Sáu during: "Chỗ bụi cỏ kia... nước lên là rác mắc lại đó." |
 | **Marker** | Marker dọc bờ sông |
 | **Runtime object** | Runtime trash dọc bờ sông: bags, túi mắc vào cỏ/bụi |
-| **Quest tiếp theo** | `Q4_03_RiverRealization` |
+| **Quest tiếp theo** | `Q4_03_SortRiverTrash` |
 | **Notes** | — |
 
-#### Q4_03_RiverRealization
+#### Q4_03_SortRiverTrash
 
 | Mục | Chi tiết |
 |---|---|
-| **Quest ID** | `Q4_03_RiverRealization` |
+| **Quest ID** | `Q4_03_SortRiverTrash` |
+| **Chapter** | 4 |
+| **Title** | Rác Từ Bờ Sông |
+| **Objective** | Đem rác bờ sông về điểm tập kết để phân loại |
+| **Target** | `TrashSite` |
+| **Interaction type** | Sorting minigame |
+| **Completion condition** | Sorting complete |
+| **Dialogue** | — |
+| **Marker** | Marker trên điểm tập kết / sorting hitbox |
+| **Runtime object** | Invisible sorting hitboxes; static scene bins are the visible bins |
+| **Quest tiếp theo** | `Q4_04_RiverRealization` |
+| **Notes** | Uses the picked river trash bag items |
+
+#### Q4_04_RiverRealization
+
+| Mục | Chi tiết |
+|---|---|
+| **Quest ID** | `Q4_04_RiverRealization` |
 | **Chapter** | 4 |
 | **Title** | Gió Và Mưa Không Hỏi |
 | **Objective** | Nói lại với Ông Sáu |
@@ -623,14 +691,31 @@ Runtime status:
 | **Dialogue** | Anh Hòa cống nghẹt conversation (xem Section 6). After clear: Bác Xanh + Chị Lan (xem Section 6) |
 | **Marker** | Marker tại cống |
 | **Runtime object** | Drain blockage trash cluster |
-| **Quest tiếp theo** | `Q5_03_GatherCommunity` |
+| **Quest tiếp theo** | `Q5_03_SortDrainTrash` |
 | **Notes** | CS5A → CS5B sequence |
 
-#### Q5_03_GatherCommunity
+#### Q5_03_SortDrainTrash
 
 | Mục | Chi tiết |
 |---|---|
-| **Quest ID** | `Q5_03_GatherCommunity` |
+| **Quest ID** | `Q5_03_SortDrainTrash` |
+| **Chapter** | 5 |
+| **Title** | Rác Cuối Dòng |
+| **Objective** | Phân loại rác lấy ra từ cống |
+| **Target** | `TrashSite` |
+| **Interaction type** | Sorting minigame |
+| **Completion condition** | Sorting complete |
+| **Dialogue** | — |
+| **Marker** | Marker trên điểm tập kết / sorting hitbox |
+| **Runtime object** | Invisible sorting hitboxes; static scene bins are the visible bins |
+| **Quest tiếp theo** | `Q5_04_GatherCommunity` |
+| **Notes** | Uses drain cleanup bag items |
+
+#### Q5_04_GatherCommunity
+
+| Mục | Chi tiết |
+|---|---|
+| **Quest ID** | `Q5_04_GatherCommunity` |
 | **Chapter** | 5 |
 | **Title** | Không Thể Dọn Một Mình |
 | **Objective** | Gọi lại các NPC chính |
@@ -640,31 +725,31 @@ Runtime status:
 | **Dialogue** | Community gather conversations: Cô Tư, Anh Tùng, Ông Sáu, Chị Lan (xem Section 6) |
 | **Marker** | Marker lần lượt trên từng NPC cần gặp |
 | **Runtime object** | Không |
-| **Quest tiếp theo** | `Q5_04_PreventReturn` |
+| **Quest tiếp theo** | `Q5_05_PreventReturn` |
 | **Notes** | Player quay lại gặp từng NPC ở vị trí của họ |
 
-#### Q5_04_PreventReturn
+#### Q5_05_PreventReturn
 
 | Mục | Chi tiết |
 |---|---|
-| **Quest ID** | `Q5_04_PreventReturn` |
+| **Quest ID** | `Q5_05_PreventReturn` |
 | **Chapter** | 5 |
 | **Title** | Để Rác Không Quay Lại |
-| **Objective** | Kích hoạt 2+ hành động phòng ngừa |
+| **Objective** | Đặt thùng, biển nhắc và trồng cây ở khu làng |
 | **Target** | Placement zones (tạp hóa, sân bóng, bờ sông) |
 | **Interaction type** | Placement |
-| **Completion condition** | Placement count reached (≥ 2) |
+| **Completion condition** | Placement count reached (3) |
 | **Dialogue** | Không — hành động trực tiếp |
 | **Marker** | Marker tại placement spots |
 | **Runtime object** | Runtime placement markers: thùng rác, biển nhắc, cây xanh |
-| **Quest tiếp theo** | `Q5_05_ReturnToCommunityHouse` |
+| **Quest tiếp theo** | `Q5_06_ReturnToCommunityHouse` |
 | **Notes** | — |
 
-#### Q5_05_ReturnToCommunityHouse
+#### Q5_06_ReturnToCommunityHouse
 
 | Mục | Chi tiết |
 |---|---|
-| **Quest ID** | `Q5_05_ReturnToCommunityHouse` |
+| **Quest ID** | `Q5_06_ReturnToCommunityHouse` |
 | **Chapter** | 5 |
 | **Title** | Lời Hứa Ven Sông |
 | **Objective** | Quay về Nhà văn hóa gặp Bác Xanh |
@@ -674,7 +759,7 @@ Runtime status:
 | **Dialogue** | Ending scene dialogue (xem Section 6) |
 | **Marker** | Marker tại Bác Xanh / Nhà văn hóa |
 | **Runtime object** | Không |
-| **Quest tiếp theo** | `PostEnding_FreeRoam` |
+| **Quest tiếp theo** | `EndingSequence`, then `PostEnding_FreeRoam` |
 | **Notes** | CS5C trigger. Ending fires once only |
 
 #### PostEnding_FreeRoam
@@ -1196,8 +1281,8 @@ Mỗi NPC phụ có Before/After lines ngắn. Đã có đầy đủ trong docs,
 | **Vai trò story** | Nhu cầu sinh hoạt tăng → bao bì tăng → rác đời thường |
 | **Arc** | Phòng thủ nhẹ → nhận ra số lượng cộng dồn → chủ động nhắc khách |
 | **Location mặc định** | Tạp hóa Cô Tư (`TapHoaCoTu_HouseOnly_Rural`) |
-| **Quest xuất hiện** | Q2_01-04, Q5_03, ending |
-| **Interactable khi** | Q2_01 (intro), Q2_04 (commitment), Q5_03 (gather) |
+| **Quest xuất hiện** | Q2_01, Q2_05, Q5_04, ending |
+| **Interactable khi** | Q2_01 (intro), Q2_05 (commitment), Q5_04 (gather) |
 | **Không interactable khi** | Ch1, Ch3-4 (không phải mục tiêu chính) |
 
 **`Đề xuất bổ sung` — Movement/Staging:**
@@ -1218,7 +1303,7 @@ Mỗi NPC phụ có Before/After lines ngắn. Đã có đầy đủ trong docs,
 | **Arc** | Vô tư → hơi ngại khi thấy hậu quả → rủ nhóm bạn dọn sân |
 | **Location mặc định** | Sân bóng (gần `KhungThanh_01_Marker` hoặc `KhungThanh_02_Marker`) |
 | **Quest xuất hiện** | Q3_01-05, Q5_03, ending |
-| **Interactable khi** | Q3_02 (intro), Q5_03 (gather) |
+| **Interactable khi** | Q3_02 (intro), Q5_04 (gather) |
 | **Không interactable khi** | Ch1-2, Ch4 |
 
 **`Đề xuất bổ sung` — Movement/Staging:**
@@ -1260,7 +1345,7 @@ Mỗi NPC phụ có Before/After lines ngắn. Đã có đầy đủ trong docs,
 | **Arc** | Hoài niệm → thấy đường rác đi → trở thành người nhắc bờ sông sạch |
 | **Location mặc định** | Bờ sông (`NPC_OngSau_Marker`) |
 | **Quest xuất hiện** | Q4_01-03, Q5_03, ending |
-| **Interactable khi** | Q4_01 (intro), Q4_03 (realization), Q5_03 (gather) |
+| **Interactable khi** | Q4_01 (intro), Q4_04 (realization), Q5_04 (gather) |
 | **Không interactable khi** | Ch1-3 |
 
 **`Đề xuất bổ sung` — Movement/Staging:**
@@ -1501,7 +1586,7 @@ Mỗi NPC phụ có Before/After lines ngắn. Đã có đầy đủ trong docs,
 ### 9.10 Notebook Entry
 
 - Fire 1 lần mỗi chapter khi quest liên quan complete.
-- Client hiện notebook toast với text tương ứng.
+- Client lưu entry thành trang của chapter tương ứng, tự mở cuốn nhật ký tới trang mới, và cho player lật lại các trang đã unlock.
 - **Trạng thái:** `Đã build`
 
 ### 9.11 Ending / Free Roam
@@ -1596,15 +1681,16 @@ Mỗi NPC phụ có Before/After lines ngắn. Đã có đầy đủ trong docs,
 | **Text** | Feedback ngắn (ví dụ: confirmation text) |
 | **Visual style** | Consistent với HUD mới |
 
-### 10.7 Notebook Toast
+### 10.7 Notebook Book
 
 | Mục | Chi tiết |
 |---|---|
-| **Khi hiện** | 1 lần mỗi chapter khi quest liên quan complete |
-| **Khi ẩn** | Auto-dismiss |
+| **Khi mở khóa** | 1 lần mỗi chapter khi quest liên quan complete |
+| **Khi hiện** | Client tự mở cuốn nhật ký tới trang chương vừa unlock; sau đó player có thể mở lại bằng nút `Nhật ký` hoặc phím `N` |
+| **Khi ẩn** | Player bấm `Đóng`, phím `Esc`, hoặc UI story bị ẩn khi vào menu/minigame/dialogue |
 | **Text** | Notebook entry text (xem Section 5, mỗi chapter có entry riêng) |
-| **Visual style** | Consistent với HUD |
-| **Edge cases** | Chỉ fire 1 lần/chapter — tracked bằng `notebookFlags` |
+| **Visual style** | Panel dạng cuốn sổ hai trang: bìa Green Again bên trái, nội dung chương bên phải, nút `Trước`/`Sau` để lật lại các trang đã unlock |
+| **Edge cases** | Chỉ fire 1 lần/chapter — tracked bằng `notebookFlags`; client giữ các trang đã unlock trong session để xem lại |
 
 ### 10.8 Ending Overlay
 
@@ -1818,7 +1904,7 @@ end
 - [ ] Fresh play từ Q1_01 → PostEnding_FreeRoam.
 - [ ] Mỗi quest advance đúng.
 - [ ] Marker luôn chỉ đúng target.
-- [ ] Notebook toast fire đúng chapter.
+- [ ] Notebook book unlock đúng chapter và nút `Trước`/`Sau` xem lại được các trang đã mở.
 - [ ] Ending chỉ chạy 1 lần.
 
 #### Polish Pass
@@ -2013,7 +2099,7 @@ end
 | **Art polish placement** | Thấp | Thùng rác, biển nhắc có model chi tiết |
 | **NPC walking animation** | Thấp | Bé Na chạy nhặt bóng, Ông Sáu đi dọc bờ |
 | **Post-ending visual** | Trung bình | Map sáng hơn / sạch hơn ở post-ending |
-| **Notebook UI** | Thấp | Notebook panel mở lại xem entries cũ, không chỉ toast |
+| **Notebook persistence** | Thấp | UI cuốn nhật ký đã mở lại được trong session; cần DataStore nếu muốn giữ trang đã unlock giữa các lần vào game |
 
 ### 14.4 Câu hỏi cần user xác nhận
 

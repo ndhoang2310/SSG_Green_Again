@@ -1,6 +1,6 @@
-# Green Again v5 - Cutscene Script
+# Green Again v6 - Cutscene Script
 
-> Cutscene trong v5 là xương sống cảm xúc. Mỗi cutscene phải có: mục tiêu cảm xúc, staging, thoại chính, trigger, và objective sau đó.
+> Cutscene trong v6 là xương sống cảm xúc. Mỗi cutscene phải có: mục tiêu cảm xúc, staging, thoại chính, trigger, và objective sau đó.
 
 ## 1. Cutscene Style
 
@@ -22,7 +22,9 @@
 | CS4 | Ch4 | Rác Trôi Theo Nước | Player gặp Ông Sáu | Rác không đứng yên |
 | CS5A | Ch5 | Cống Nghẹt | Player tới cống | Hậu quả cuối dòng |
 | CS5B | Ch5 | Dọn Cống Không Đủ | Sau clear cống | Cần cộng đồng thay đổi |
-| CS5C | Ch5 | Lời Hứa Nhà Văn Hóa | Player nói chuyện Bác Xanh cuối game | Ending truyền cảm hứng |
+| CS5C | Ch5 | Ngõ Sau Cơn Mưa | Player quay lại khu dân cư | Hậu quả quay lại đời sống hằng ngày |
+| CS5D | Ch5 | Chỗ Sống Nhỏ | Player dọn góc cây và trồng cây | Cho thấy môi trường là nơi sống, không chỉ nơi sạch |
+| CS5E | Ch5 | Lời Hứa Nhà Văn Hóa | Player nói chuyện Bác Xanh cuối game | Ending truyền cảm hứng |
 
 ## 3. CS0 - Bước Qua Cổng
 
@@ -244,7 +246,70 @@ Objective after:
 Rủ mọi người cùng thay đổi
 ```
 
-## 11. CS5C - Lời Hứa Nhà Văn Hóa
+## 11. CS5C - Ngõ Sau Cơn Mưa
+
+Trigger: sau khi player rủ Cô Tư, Anh Tùng và Ông Sáu cùng thay đổi.
+
+Staging:
+
+- Camera hoặc dialogue focus nhìn dọc một đoạn ngõ dân cư.
+- 2-3 cụm rác nhỏ nằm ở chỗ thấp: mép mương, cạnh gốc cây, đường đi học.
+- Cô Hạnh đứng gần đầu ngõ; Em Phúc đứng gần lối đi học.
+- Không cần cinematic dài. Dialogue lock + marker tới 2 inspect spots là đủ.
+
+Dialogue draft:
+
+```text
+Cô Hạnh:
+Con vừa ở cống về hả? Vậy con nhìn thử ngõ này sau mưa đi.
+
+Em Phúc:
+Con đi học ngang đây mỗi ngày. Có bữa mưa xong, rác dồn ngay chỗ con bước qua.
+
+Bác Xanh:
+Rác đi xa, rồi có lúc nó quay lại rất gần.
+```
+
+Objective after:
+
+```text
+Quan sát ngõ sau mưa
+```
+
+## 12. CS5D - Chỗ Sống Nhỏ
+
+Trigger: player hoàn thành inspect/cleanup ngõ dân cư.
+
+Staging:
+
+- Camera focus một gốc cây/bụi cỏ nhỏ.
+- Có dây nilon/mảnh nhựa ở cạnh gốc cây.
+- Nếu có model động vật: cho chim/mèo/cún xuất hiện sau khi dọn. Nếu không có, dùng sound cue, vệt chân, hoặc Bé Na/Em Phúc phản ứng.
+- Trồng cây non dùng runtime tree visual hiện có; không cần mechanic mới ngoài placement.
+
+Dialogue draft:
+
+```text
+Em Phúc:
+Hồi trước chỗ gốc cây này hay có chim xuống uống nước.
+
+Bác Xanh:
+Không phải lúc nào mình cũng cần làm chuyện lớn như cứu một con vật.
+
+Bác Xanh:
+Nhiều khi chỉ cần chừa lại một chỗ sạch để sự sống tự quay về.
+
+Chị Lan:
+Trồng cây không thay thế chuyện bỏ rác đúng chỗ. Nhưng nó nhắc mọi người chăm tiếp mỗi ngày.
+```
+
+Objective after:
+
+```text
+Dọn góc cây, đặt bát nước và trồng cây non
+```
+
+## 13. CS5E - Lời Hứa Nhà Văn Hóa
 
 Trigger: player quay về Nhà văn hóa và nói chuyện Bác Xanh.
 
@@ -252,6 +317,7 @@ Staging:
 
 - Nhà văn hóa sáng hơn.
 - NPC chính đứng thành nhóm, không quá nghi thức.
+- Cô Hạnh và Em Phúc đứng gần Bé Na hoặc cạnh một cây non runtime.
 - Nếu có NPC phụ đã gặp, họ đứng xung quanh.
 
 Dialogue draft:
@@ -269,8 +335,14 @@ Tui ngồi bờ sông mỗi ngày. Ai bỏ rác, tui nhắc liền.
 Chị Lan:
 Điểm tập kết rác mở sẵn. Miễn mọi người chịu phân loại, tôi hướng dẫn.
 
+Cô Hạnh:
+Từ mai mỗi đoạn ngõ có người để ý. Không đợi rác dồn lại mới gọi nhau.
+
+Em Phúc:
+Con nhận tưới cây đầu ngõ. Con cũng nhắc mấy bạn đừng đá vỏ bánh xuống mương.
+
 Bé Na:
-Vậy mai tụi con chơi bóng được không?
+Con với Phúc sẽ coi góc cây nữa. Nếu chim hay mèo quay lại, tụi con giữ chỗ đó sạch.
 
 Bác Xanh:
 Được chứ. Ven Sông xanh lại không phải vì một người làm hết.
@@ -285,4 +357,3 @@ End text:
 Ven Sông chưa sạch mãi mãi.
 Nhưng Ven Sông đã có người cùng chăm.
 ```
-

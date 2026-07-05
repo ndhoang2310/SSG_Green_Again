@@ -109,7 +109,7 @@ Important object mappings:
 Current important gameplay coordinates:
 
 - Nhà văn hóa hub: `(284.24, 51.85, -3570.00)`
-- Điểm tập kết rác: `(93.57, 58.45, -3533.43)`
+- Điểm tập kết rác / `TrashSite`: `(93.57, 51.52, -3533.43)` for gameplay marker/interact hitbox. The visible sorting station is higher/around this area, but runtime interaction should stay ground-reachable.
 - Tạp hóa: `(78.78, 49.45, -3187.65)`
 - Sân bóng A: `(-67.07, 51.55, -3225.84)`
 - Sân bóng B: `(-51.72, 56.05, -3390.71)`

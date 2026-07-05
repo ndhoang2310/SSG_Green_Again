@@ -1,6 +1,6 @@
-# Green Again v5 - Detailed Implementation Plan
+# Green Again v6 - Detailed Implementation Plan
 
-> Plan này dùng để build v5 trong Roblox theo hướng story-first. Mục tiêu không phải thêm nhiều mechanic, mà là làm người chơi hiểu chuyện qua cutscene, thoại, marker, rồi mới hành động.
+> Plan này dùng để build v6 trong Roblox theo hướng story-first. Mục tiêu không phải thêm nhiều mechanic, mà là làm người chơi hiểu chuyện qua cutscene, thoại, marker, rồi mới hành động.
 
 ## 0. Build Strategy
 
@@ -233,7 +233,9 @@ Quest chain:
 Q2_01_ToGrocery
 -> Q2_02_ObserveVillageTrash
 -> Q2_03_CleanGrocery
--> Q2_04_GroceryCommitment
+-> Q2_04_SortGroceryTrash
+-> Q2_05_GroceryCommitment
+-> Q2_06_TalkToBacXanh
 -> Q3_01_ToFootballField
 ```
 
@@ -243,7 +245,9 @@ Build tasks:
 - [ ] Cô Tư intro conversation.
 - [ ] Trash cluster: túi nilon, vỏ bánh, chai nước near tạp hóa.
 - [ ] Optional inspect points around đường làng.
+- [ ] Sorting minigame for grocery trash at `TrashSite`.
 - [ ] AfterQuest Cô Tư commitment.
+- [ ] Bác Xanh transition dialogue outside grocery.
 - [ ] Add thùng rác visual/commitment near tạp hóa.
 - [ ] Notebook Ch2.
 - [ ] Transition to sân bóng.
@@ -261,8 +265,9 @@ Quest chain:
 Q3_01_ToFootballField
 -> Q3_02_TalkAnhTung
 -> Q3_03_CleanField
--> Q3_04_BeNaMoment
--> Q3_05_FieldReminder
+-> Q3_04_SortFieldTrash
+-> Q3_05_BeNaMoment
+-> Q3_06_FieldReminder
 -> Q4_01_ToRiver
 ```
 
@@ -272,6 +277,7 @@ Build tasks:
 - [ ] Add field trash: chai nước, túi snack, ly nhựa.
 - [ ] Anh Tùng intro dialogue with Bé Na interruption.
 - [ ] Cleanup around ghế/khung thành/edge sân.
+- [ ] Sorting minigame for field trash at `TrashSite`.
 - [ ] Bé Na after dialogue.
 - [ ] Add field reminder: biển/thùng/commitment.
 - [ ] Notebook Ch3.
@@ -289,7 +295,8 @@ Quest chain:
 ```text
 Q4_01_ToRiver
 -> Q4_02_FollowRiverTrash
--> Q4_03_RiverRealization
+-> Q4_03_SortRiverTrash
+-> Q4_04_RiverRealization
 -> Q5_01_FindDrain
 ```
 
@@ -299,6 +306,7 @@ Build tasks:
 - [ ] Ông Sáu intro dialogue.
 - [ ] River trail markers from bờ sông to khúc sông.
 - [ ] River trash cluster/visual: bags caught on grass/edge.
+- [ ] Sorting minigame for river trash at `TrashSite`.
 - [ ] AfterQuest realization dialogue.
 - [ ] Notebook Ch4.
 - [ ] Transition to cống.
@@ -315,9 +323,12 @@ Quest chain:
 ```text
 Q5_01_FindDrain
 -> Q5_02_ClearDrain
--> Q5_03_GatherCommunity
--> Q5_04_PreventReturn
--> Q5_05_ReturnToCommunityHouse
+-> Q5_03_SortDrainTrash
+-> Q5_04_GatherCommunity
+-> Q5_05_ResidentialAfterRain
+-> Q5_06_CareSmallLives
+-> Q5_07_NeighborhoodPlanting
+-> Q5_08_ReturnToCommunityHouse
 -> EndingSequence
 ```
 
@@ -335,19 +346,39 @@ Build tasks:
   - Ông Sáu
   - Chị Lan
   - optional Anh Hòa
-- [ ] Prevention actions:
+- [ ] Add residential mini-route after gather:
+  - `ResidentialLane` runtime anchor or real `ResidentialSt` target.
+  - Cô Hạnh dialogue about ngõ sau mưa.
+  - Em Phúc dialogue about đường đi học.
+  - 2 inspect/cleanup spots in the lane.
+- [ ] Add small-lives care beat:
+  - `SmallLivesCorner` runtime anchor near a tree/bush.
+  - 2 cleanup items: dây nilon/mảnh nhựa near the corner.
+  - 1 placement action: bát nước or small reminder sign.
+  - optional prop/sound cue for chim/mèo/cún after complete; if no asset, use dialogue reaction only.
+- [ ] Prevention / planting actions:
   - thùng gần tạp hóa
   - biển/thùng gần sân bóng
-  - biển bờ sông or cây xanh
+  - biển bờ sông or đầu ngõ dân cư
+  - 3 cây non: ngõ dân cư, gần Nhà văn hóa, gần bờ sông/sân bóng
 - [ ] Return to Nhà văn hóa.
-- [ ] Ending gathering and final dialogue.
+- [ ] Ending gathering and final dialogue includes Cô Hạnh, Em Phúc, cây non, and góc sống nhỏ.
 - [ ] Post-ending state/free roam.
 
 Acceptance:
 
 - Chapter 5 không cảm giác là một checklist dài.
-- Player sees cause -> consequence -> prevention -> community promise.
+- Player sees cause -> consequence -> residential impact -> care/prevention -> community promise.
+- Khu dân cư được dùng thật, không chỉ là đường đi ngang.
+- Animal/small-lives beat feels meaningful even if implemented with simple prop/dialogue fallback.
+- Tree planting is visible and has story ownership, not just a generic placement count.
 - Ending fires once and does not branch.
+
+MVP-fast path:
+
+- Nếu chưa muốn thêm nhiều handler mới, implement `ResidentialAfterRain`, `CareSmallLives` và `NeighborhoodPlanting` bằng cùng hệ placement/cleanup hiện có.
+- Không cần AI động vật, pathfinding, inventory mới, hay save state mới.
+- Chỉ cần thêm quest data, dialogue data, 2 runtime anchors, vài cleanup/placement entries, và ending staging.
 
 ## 11. Milestone M10 - NPC Phụ And Ambient Life
 
@@ -357,7 +388,7 @@ Priority NPCs:
 
 1. Bác Bảy near Nhà văn hóa.
 2. Chú Minh near Điểm tập kết rác.
-3. Cô Hạnh/Em Phúc near làng/tạp hóa.
+3. Cô Hạnh/Em Phúc near khu dân cư; trong v6 đây là tuyến Ch5 nên ưu tiên hơn ambient-only.
 4. Dì Năm/Nam thủ môn/Cô Mai near sân bóng.
 5. Chú Lộc/Bà Tám near bờ sông.
 6. Anh Hòa near cống.
@@ -412,4 +443,3 @@ Do this next:
 Reason:
 
 Chapter 1 is the vertical slice. If Chapter 1 proves dialogue -> marker -> cleanup -> sorting -> notebook works, every later chapter becomes content/data plus a few special interactions.
-

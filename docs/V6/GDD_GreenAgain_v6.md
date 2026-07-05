@@ -1,10 +1,10 @@
-# Green Again v5 - Game Design Document
+# Green Again v6 - Game Design Document
 
-> Bản v5 tập trung vào storytelling. Nhặt rác, đặt thùng, dựng biển, trồng cây là hành động minh họa cho câu chuyện, không phải phần thưởng chính.
+> Bản v6 tập trung vào storytelling. Nhặt rác, đặt thùng, dựng biển, trồng cây là hành động minh họa cho câu chuyện, không phải phần thưởng chính.
 
 ## 1. High Concept
 
-Green Again v5 là game Roblox kể chuyện giáo dục môi trường tại thôn Ven Sông. Người chơi là một tình nguyện viên mới đến, gặp Bác Xanh và người dân, rồi dần hiểu vì sao một nơi từng xanh lại xuống cấp vì rất nhiều hành động nhỏ.
+Green Again v6 là game Roblox kể chuyện giáo dục môi trường tại thôn Ven Sông. Người chơi là một tình nguyện viên mới đến, gặp Bác Xanh và người dân, rồi dần hiểu vì sao một nơi từng xanh lại xuống cấp vì rất nhiều hành động nhỏ. So với v5, v6 giữ mạch chương 1-4 nhưng làm chương cuối dày hơn: sau khi xử lý cống, player quay lại khu dân cư để thấy rác ảnh hưởng tới đường đi học, những chỗ sống nhỏ của động vật, cây xanh và lời hứa cụ thể của từng người.
 
 Core fantasy:
 
@@ -46,6 +46,8 @@ Sảnh chờ
 -> Sân bóng / Anh Tùng / Bé Na
 -> Bờ sông / Ông Sáu
 -> Cống thoát nước cuối xóm
+-> Ngõ dân cư sau cơn mưa / Cô Hạnh / Em Phúc
+-> Góc sống nhỏ cho động vật / trồng cây
 -> Nhà văn hóa ending
 ```
 
@@ -57,7 +59,7 @@ Sảnh chờ
 | 2 | Chỉ Một Chút Thôi Mà | Rác sinh hoạt bắt đầu từ đâu? | Cô Tư | Đi qua làng, nói chuyện tạp hóa, dọn rác nhỏ |
 | 3 | Sau Trận Bóng | Nơi vui chơi chung bị ảnh hưởng thế nào? | Anh Tùng, Bé Na | Dọn rác quanh sân bóng, đặt nhắc nhở |
 | 4 | Rác Không Đứng Yên | Rác đi đâu sau khi bị bỏ lại? | Ông Sáu | Theo rác ra bờ sông/khúc sông |
-| 5 | Cống Cuối Xóm Và Lời Hứa Ven Sông | Làm sao để chuyện không lặp lại? | Bác Xanh, cộng đồng | Dọn cống, gọi cộng đồng, ending |
+| 5 | Cống Cuối Xóm Và Những Chỗ Sống Nhỏ | Làm sao để chuyện không lặp lại và ai được hưởng khi Ven Sông xanh hơn? | Bác Xanh, cộng đồng, Cô Hạnh, Em Phúc | Dọn cống, quay lại khu dân cư, chăm góc sống nhỏ, trồng cây, ending |
 
 ## 6. Core Loop
 
@@ -81,25 +83,38 @@ Bác Xanh hoặc NPC đặt vấn đề
 
 ## 8. Ending
 
-V5 chỉ có 1 ending chính.
+V6 chỉ có 1 ending chính.
 
 Trigger:
 
 1. Cống cuối xóm được xử lý.
 2. Cộng đồng có ít nhất vài hành động phòng ngừa.
-3. Player quay về Nhà văn hóa.
-4. Nói chuyện với Bác Xanh để chạy ending sequence.
+3. Khu dân cư có một beat được phục hồi: đường đi học sạch hơn, một góc sống nhỏ cho động vật được chăm, và vài cây non được trồng.
+4. Player quay về Nhà văn hóa.
+5. Nói chuyện với Bác Xanh để chạy ending sequence.
 
 Ending message:
 
 > Ven Sông không xanh lại vì một người dọn sạch mọi thứ. Ven Sông xanh lại vì mọi người bắt đầu thấy phần việc nhỏ của mình.
 
+Ending image:
+
+```text
+Nhà văn hóa sáng hơn.
+Cô Tư nhắc khách bỏ rác đúng chỗ.
+Anh Tùng nhận dọn sân sau trận.
+Ông Sáu nhận nhắc người ở bờ sông.
+Cô Hạnh nhận cùng từng nhà giữ ngõ sạch.
+Em Phúc và Bé Na đứng cạnh cây non mới trồng.
+Một góc nhỏ có chim/cún/mèo quay lại gần bát nước hoặc bụi cây sạch.
+```
+
 ## 9. Required Companion Docs
 
 - `README.md`: hướng dẫn dùng tài liệu nào khi nào.
-- `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md`: map theo cụm địa điểm thật.
-- `GDD_GreenAgain_v5_STORY_BIBLE.md`: lore, tone, nhân vật, arc.
-- `GDD_GreenAgain_v5_CUTSCENE_SCRIPT.md`: cutscene và staging từng chương.
-- `GDD_GreenAgain_NPC_DIALOGUE_v5.md`: thoại NPC và ambient lines.
-- `GDD_GreenAgain_v5_QUEST_FLOW.md`: quest IDs, trigger, marker, state.
-- `GDD_GreenAgain_v5_IMPLEMENTATION_PLAN.md`: plan implement chi tiết theo milestone.
+- `GDD_GreenAgain_v6_CURRENT_MAP_DRAFT.md`: map theo cụm địa điểm thật.
+- `GDD_GreenAgain_v6_STORY_BIBLE.md`: lore, tone, nhân vật, arc.
+- `GDD_GreenAgain_v6_CUTSCENE_SCRIPT.md`: cutscene và staging từng chương.
+- `GDD_GreenAgain_NPC_DIALOGUE_v6.md`: thoại NPC và ambient lines.
+- `GDD_GreenAgain_v6_QUEST_FLOW.md`: quest IDs, trigger, marker, state.
+- `GDD_GreenAgain_v6_IMPLEMENTATION_PLAN.md`: plan implement chi tiết theo milestone.

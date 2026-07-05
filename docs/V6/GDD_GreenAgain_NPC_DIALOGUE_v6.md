@@ -1,6 +1,6 @@
-# Green Again v5 - NPC Dialogue Script
+# Green Again v6 - NPC Dialogue Script
 
-> Thoại v5 là gameplay chính. Nhặt rác, phân loại, đặt thùng, dựng biển chỉ là hành động sau khi người chơi đã hiểu một mảnh câu chuyện.
+> Thoại v6 là gameplay chính. Nhặt rác, phân loại, đặt thùng, dựng biển chỉ là hành động sau khi người chơi đã hiểu một mảnh câu chuyện.
 
 ## 1. Dialogue Philosophy
 
@@ -360,6 +360,24 @@ Mình đặt thùng gần đây được không cô?
 
 Cô Tư:
 Được. Cô còn nhắc khách nữa. Nói nhẹ thôi, nhưng ngày nào cũng nói thì chắc thành quen.
+```
+
+Next beat:
+
+```text
+Sau đoạn này, quest chuyển sang `Q2_06_TalkToBacXanh`.
+```
+
+### Bác Xanh - Q2 After Grocery
+
+Trigger: player gặp Bác Xanh ngoài tạp hóa sau khi nói lại với Cô Tư.
+
+```text
+Bác Xanh:
+Cháu thấy đó, tiệm tạp hóa cũng là một phần của câu chuyện.
+
+Bác Xanh:
+Còn ở sân bóng, rác đến từ những lúc vui nhất. Khi người ta vui, người ta càng dễ nghĩ lát nữa tính.
 ```
 
 Notebook:
@@ -772,6 +790,126 @@ Ngồi chứ. Từ mai tui ngồi thêm một việc nữa: ai bỏ rác, tui nh
 Sông không tự lên tiếng được. Người ngồi cạnh sông phải lên tiếng giùm.
 ```
 
+### Residential After Rain - Cô Hạnh + Em Phúc
+
+Trigger: sau khi player đã rủ Cô Tư, Anh Tùng và Ông Sáu nhận phần việc. Marker dẫn về `ResidentialSt` / `ResidentialLane`.
+
+```text
+Cô Hạnh:
+Con vừa ở cống về hả? Vậy con nhìn thử ngõ này sau mưa đi.
+
+Player:
+Cháu tưởng cống nghẹt thì chỉ ảnh hưởng ở cuối xóm.
+
+Cô Hạnh:
+Không đâu. Nước dềnh lên là rác quay ngược về mấy đoạn thấp. Sáng ra người đi học, người đi chợ đều phải né.
+
+Em Phúc:
+Con đi học ngang đây mỗi ngày. Có bữa mưa xong, vỏ bánh với túi nilon dồn ngay chỗ con bước qua.
+
+Player:
+Vậy khu dân cư cũng là một phần của đường rác.
+
+Cô Hạnh:
+Ừ. Trước giờ cô hay nhắc chung bằng loa. Nhưng nhắc chung thì dễ trôi đi như nước.
+
+Em Phúc:
+Nếu mỗi nhà giữ đoạn trước cửa mình, tụi con đi học đỡ phải né rác.
+
+Cô Hạnh:
+Con giúp cô nhìn lại mấy điểm thấp trong ngõ. Mình không đợi tới ngày tổng vệ sinh nữa.
+```
+
+Objective:
+
+```text
+Quan sát ngõ sau mưa và dọn vài điểm rác thấp
+```
+
+Notebook add-on:
+
+```text
+Rác không chỉ đi ra xa. Khi mưa xuống, hậu quả có thể quay lại ngay trước ngõ nhà mình.
+```
+
+### Care Small Lives - Góc Sống Nhỏ
+
+Trigger: sau `ResidentialAfterRain`, marker dẫn tới một gốc cây/bụi cỏ gần khu dân cư.
+
+Implementation note: không cần hệ thống rescue. Dùng 2-3 interact đơn giản: dọn mảnh nhựa/dây nilon, đặt bát nước hoặc biển nhỏ, sau đó hiện prop/sound cue chim/mèo/cún.
+
+```text
+Em Phúc:
+Hồi trước chỗ gốc cây này hay có chim xuống uống nước.
+
+Bé Na:
+Em cũng từng thấy một con mèo nằm ở đây. Mấy hôm nay nó tránh ra xa.
+
+Player:
+Chắc vì rác mắc quanh gốc cây?
+
+Em Phúc:
+Dạ. Có cả dây nilon nữa. Nhìn nhỏ thôi, nhưng tụi nó đâu biết gỡ như mình.
+
+Bác Xanh:
+Không phải lúc nào mình cũng cần làm chuyện lớn như "cứu" một con vật.
+
+Bác Xanh:
+Nhiều khi chỉ cần chừa lại một chỗ sạch để sự sống tự quay về.
+
+Player:
+Mình dọn góc này rồi đặt một bát nước nhỏ được không?
+
+Bé Na:
+Được ạ. Mai tụi con đi qua còn nhớ xem cây có cần tưới không.
+```
+
+Objective:
+
+```text
+Dọn góc cây và đặt bát nước/biển nhỏ
+```
+
+After action:
+
+```text
+Em Phúc:
+Nhìn thoáng hơn rồi. Chỉ là một góc nhỏ thôi, nhưng con thấy dễ thở hơn.
+
+Bé Na:
+Nếu tụi nó quay lại, tụi con sẽ giữ chỗ này sạch.
+```
+
+### Neighborhood Planting - Mỗi Nhà Một Bóng Cây
+
+Trigger: sau `CareSmallLives`.
+
+```text
+Cô Hạnh:
+Dọn xong rồi, mình cần thứ gì đó để mọi người nhớ chăm tiếp.
+
+Player:
+Trồng cây được không cô?
+
+Cô Hạnh:
+Được. Một cây ở đầu ngõ, một cây gần Nhà văn hóa, một cây gần bờ sông.
+
+Chị Lan:
+Trồng cây không thay thế chuyện bỏ rác đúng chỗ. Nhưng nó nhắc mọi người rằng chỗ sạch cần được chăm mỗi ngày.
+
+Em Phúc:
+Con nhận tưới cây đầu ngõ. Nhưng nếu con quên, cô Hạnh nhắc con nha.
+
+Cô Hạnh:
+Cô nhắc. Rồi con nhắc lại cô khi cô quên.
+```
+
+Objective:
+
+```text
+Trồng cây non và đặt phòng ngừa ở khu làng
+```
+
 ## 10. Ending Scene Dialogue
 
 Trigger: player nói chuyện với Bác Xanh ở Nhà văn hóa sau Q5.
@@ -795,8 +933,14 @@ Sân bóng tụi con chơi thì tụi con dọn. Đá xong mới được về.
 Ông Sáu:
 Tui ngồi bờ sông mỗi ngày. Tui sẽ nhắc người câu cá, người đi ngang, và nhắc cả tui nữa.
 
+Cô Hạnh:
+Tổ dân phố sẽ chia việc nhỏ theo từng đoạn ngõ. Không đợi tới lúc rác dồn lại mới gọi nhau đi dọn.
+
+Em Phúc:
+Con nhận tưới cây đầu ngõ. Con cũng nhắc mấy bạn đừng đá vỏ bánh xuống mương.
+
 Bé Na:
-Con cũng nhắc mấy bạn. Nhưng người lớn nhớ làm trước nha.
+Con với Phúc sẽ coi góc cây nữa. Nếu chim hay mèo quay lại, tụi con giữ chỗ đó sạch.
 
 Bác Xanh:
 Nghe chưa? Không ai nhận làm hết. Mỗi người nhận một phần nhỏ.
@@ -865,14 +1009,15 @@ Làng mà làm đều, tụi chú cũng nhẹ hơn nhiều.
 Before:
 
 ```text
-Nhắc thì ai cũng gật.
-Khó là làm sao để lúc không ai nhắc, mọi người vẫn nhớ.
+Nhắc thì ai cũng gật, nhất là trong buổi họp.
+Khó là sáng hôm sau, trước cửa nhà mình, mọi người còn nhớ không.
 ```
 
 After:
 
 ```text
-Nếu mỗi nhà nhớ một chút, tổ dân phố đỡ phải nhắc bằng loa suốt ngày.
+Từ mai cô chia từng đoạn ngõ cho từng nhóm nhà.
+Không phải để bắt lỗi nhau. Để ai cũng có một phần nhỏ dễ nhớ.
 ```
 
 ### Em Phúc học sinh
@@ -881,14 +1026,14 @@ Before:
 
 ```text
 Con đi học ngang đây mỗi ngày.
-Có hôm mưa, rác trôi theo nước nhìn ghê lắm.
+Có hôm mưa, rác dồn ngay chỗ con bước qua.
 ```
 
 After:
 
 ```text
 Nếu đường sạch hơn, tụi con đi học cũng vui hơn.
-Con sẽ nhắc mấy bạn đừng đá vỏ bánh xuống mương.
+Con sẽ nhắc mấy bạn đừng đá vỏ bánh xuống mương, rồi tưới cây đầu ngõ nữa.
 ```
 
 ### Dì Năm bán nước
@@ -986,4 +1131,3 @@ After:
 Thông cống một lần thì được.
 Nhưng giữ cho nó khỏi nghẹt lại mới là chuyện của cả xóm.
 ```
-

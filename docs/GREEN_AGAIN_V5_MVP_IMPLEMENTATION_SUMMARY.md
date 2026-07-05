@@ -39,23 +39,30 @@ Implemented the MVP quest route from Chapter 1 through post-ending free roam:
 - `Q1_02_MeetBacXanh`
 - `Q1_03_CleanEntrance`
 - `Q1_04_SortFirstTrash`
+- `Q1_05_MeetChiLan`
 - `Q2_01_ToGrocery`
 - `Q2_02_ObserveVillageTrash`
 - `Q2_03_CleanGrocery`
-- `Q2_04_GroceryCommitment`
+- `Q2_04_SortGroceryTrash`
+- `Q2_05_GroceryCommitment`
+- `Q2_06_TalkToBacXanh`
 - `Q3_01_ToFootballField`
 - `Q3_02_TalkAnhTung`
 - `Q3_03_CleanField`
-- `Q3_04_BeNaMoment`
-- `Q3_05_FieldReminder`
+- `Q3_04_SortFieldTrash`
+- `Q3_05_BeNaMoment`
+- `Q3_06_FieldReminder`
 - `Q4_01_ToRiver`
 - `Q4_02_FollowRiverTrash`
-- `Q4_03_RiverRealization`
+- `Q4_03_SortRiverTrash`
+- `Q4_04_RiverRealization`
 - `Q5_01_FindDrain`
 - `Q5_02_ClearDrain`
-- `Q5_03_GatherCommunity`
-- `Q5_04_PreventReturn`
-- `Q5_05_ReturnToCommunityHouse`
+- `Q5_03_SortDrainTrash`
+- `Q5_04_GatherCommunity`
+- `Q5_05_PreventReturn`
+- `Q5_06_ReturnToCommunityHouse`
+- `EndingSequence`
 - `PostEnding_FreeRoam`
 
 Implemented systems:
@@ -66,7 +73,7 @@ Implemented systems:
 - Interaction routing for NPCs, locations, trash, placement actions, and drain cleanup.
 - Runtime trash spawning for cleanup quests when needed.
 - Runtime placement markers for MVP prevention/placement actions.
-- Notebook toast once per chapter.
+- Notebook book/panel once per chapter: each unlocked chapter becomes a page, opens automatically on unlock, and can be reopened with the `Nhật ký` button or `N`.
 - Ending text after the final dialogue.
 
 ## Dialogue
@@ -124,7 +131,7 @@ Implemented a new client HUD:
 - Interaction prompt.
 - Dialogue panel.
 - Feedback toast.
-- Notebook toast.
+- Notebook book with previous/next page navigation.
 - End overlay.
 
 Marker behavior:
@@ -192,7 +199,7 @@ Observed in Roblox Studio on 2026-07-03:
   - On PLAY, the script only clears any pending ClickToMove path from the 3D PLAY click, then unanchors the character and restores the camera/humanoid. Do not force `DevComputerMovementMode` or add delayed control resets; both can make movement lock or drift.
 - Story UI gating:
   - `StoryClientMVP` treats `MainMenuGui` as an active menu guard only while the GUI is still enabled.
-  - While enabled `MainMenuGui` exists, quest tracker, prompt, touch button, dialogue panel, notebook toast, and objective marker are forced hidden.
+  - While enabled `MainMenuGui` exists, quest tracker, prompt, touch button, dialogue panel, notebook book/panel, and objective marker are forced hidden.
   - After PLAY, the story UI still stays hidden on the waiting island.
   - Quest tracker and objective marker appear only after the player reaches the main island activation zone.
 - Ownership note:
@@ -412,9 +419,9 @@ Play tests performed:
   - `(-198.184, 51.689, -3502.522)`
   - `(-204.840, 54.054, -3481.669)`
 - Verified Ch4 river trash spawns at those three positions, with client streaming all three models after teleporting near the river area.
-- Previously verified 16 ambient trash models existed at game start, with 53 visible child parts and `Interactable=false`; the 2026-07-04 diversity patch now maps 27 cleanup visuals total.
-- Verified entering Q1 cleanup activates exactly 6 Q1 trash objects.
-- Verified all 6 Q1 runtime clone bottoms sit at Y `48.43` after the height correction, including the `Props/Piles/TrashPile_Part` stain.
+- Previously verified 16 ambient trash models existed at game start, with 53 visible child parts and `Interactable=false`; the 2026-07-04 diversity patch now maps 47 cleanup visuals total: Q1=10, Q2=9, Q3=10, Q4=9, Q5=9.
+- Verified entering Q1 cleanup activates exactly 10 Q1 trash objects.
+- Verified Q1 runtime clone bottoms use the corrected ground-level Y; normal Q1 clone bottoms sit at `48.43`, while Q1 pile bottoms sit around `48.39` because of `heightOffset = -0.04`.
 - Q1 sorting visual cards use `ViewportFrame` previews with `WorldModel` children and template paths; after the diversity patch Q1 bag items include:
   - `Collectibles/Mixed/TrashBag_BlackSmall`
   - `Collectibles/Plastic/PlasticBottle_03`
@@ -422,10 +429,14 @@ Play tests performed:
   - `Props/Piles/TrashPile_Part`
   - `Collectibles/Plastic/CandyWrapper`
   - `Collectibles/PaperCardboard/PaperSheet`
+  - `Props/Piles/TrashPile_Model`
+  - `Collectibles/PaperCardboard/CardboardBox_Carton`
+  - `Collectibles/Plastic/PlasticBag_Crumpled`
+  - `Props/Piles/TrashPile_Part`
 - Fixed sorting drag alignment after visual cards were added:
   - Removed the old click-offset based drag positioning.
   - Drag clone now anchors at its center and follows the pointer using coordinates corrected by `StoryClientMVP`'s `ResponsiveScale`.
-  - Verified Q1 sorting previously opened at UI scale `0.84765625`; current Q1 cleanup now feeds 6 visual items into the same centered drag path.
+  - Verified Q1 sorting previously opened at UI scale `0.84765625`; current Q1 cleanup now feeds 10 visual items into the same centered drag path.
 - Verified wrong submit `Plastic -> Mixed` keeps quest `Rác Đi Đâu?` active and reopens the minigame with retry text.
 - Verified correct submits `Plastic -> Recycle`, `Metal -> Recycle`, `Mixed -> Mixed` close the minigame and advance to `Q1_05_MeetChiLan`.
 - Verified collecting Q1 trash hides those objects while other ambient pollution remains visible.
@@ -466,3 +477,19 @@ Play tests performed:
   - `MainMenuGui` remained enabled with `LogoImage`, `PlayBtn`, and `SetBtn` ready.
 
 Known unrelated console noise from imported assets remained, including texture permission and existing asset script warnings. These were not introduced by the MVP story scripts.
+
+## Bug Fixes Patch (2026-07-05)
+
+- Fixed floating trash height issues for Chapter 3 and Chapter 4:
+  - Chapter 3 field trash spawn height is `48.23`, measured against local Terrain around `Y=48.203`.
+  - Chapter 4 river trash spawn height is `48.23`, measured against local Terrain around `Y=48.203`.
+  - Ch5 drain staging now puts Bác Xanh and Chị Lan on the dry bank with NPC pivot-height coordinates: `BacXanh = Vector3.new(-216.0, 53.58, -3512.0)`, `ChiLan = Vector3.new(-213.0, 53.36, -3510.0)`.
+  - V6 Ch5 temporary NPCs now use visible placeholder models for `CoHanh` and `EmPhuc`, staged at ground-aligned residential-lane positions instead of invisible buried anchors.
+- Updated placement visuals to hide the flat plane and render 3D models properly:
+  - `setModelVisible` now hides `Decal`, `Texture`, and `SurfaceAppearance` to ensure the flat placeholder part becomes completely invisible.
+  - The Chapter 3 Sign Board placement now spawns an actual 3D SignBoard (`Part` + `SurfaceGui` text) at the football field instead of a flat visual marker.
+  - Changed football field sign placement coordinates to `Vector3.new(-126.278, 49.203, -3356.146)`.
+- Split Bác Xanh's dialogue out from Cô Tư's after-grocery interaction to improve the flow:
+  - Added a new quest `Q2_06_TalkToBacXanh` right after `Q2_05_GroceryCommitment`.
+  - Added new dialogue entry `BacXanh_Q2_After` containing Bác Xanh's lines about the grocery store and football field.
+  - Teleports Bác Xanh to stand at the new coordinates (`114.281, 67.989, -3310.235`) for this step before sending the player to Chapter 3.

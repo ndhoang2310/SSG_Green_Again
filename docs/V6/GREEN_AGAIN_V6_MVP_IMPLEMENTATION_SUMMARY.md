@@ -1,29 +1,44 @@
-# Green Again V5 MVP Implementation Summary
+# Green Again V6 MVP Implementation Summary
 
-Date: 2026-07-02
+Date: 2026-07-05
 
 ## Scope
 
-Built the Green Again V5 MVP as a story-first vertical slice using the existing Roblox Studio workspace and current V5 docs:
+V6 is a design/runtime expansion on top of the current working V5 map root and MVP scripts. For this pass, do **not** rename the Studio root to V6: implementation targets `Workspace["=== GREEN AGAIN V5 ==="]`, `StoryRuntimeMVP`, and `StoryClientMVP`.
 
-- `GDD_GreenAgain_v5_QUEST_FLOW.md`
-- `GDD_GreenAgain_NPC_DIALOGUE_v5.md`
-- `GDD_GreenAgain_v5_CUTSCENE_SCRIPT.md`
-- `GDD_GreenAgain_v5_CURRENT_MAP_DRAFT.md`
-- `GDD_GreenAgain_v5_STORY_BIBLE.md`
+- `GDD_GreenAgain_v6_QUEST_FLOW.md`
+- `GDD_GreenAgain_NPC_DIALOGUE_v6.md`
+- `GDD_GreenAgain_v6_CUTSCENE_SCRIPT.md`
+- `GDD_GreenAgain_v6_CURRENT_MAP_DRAFT.md`
+- `GDD_GreenAgain_v6_STORY_BIBLE.md`
 
-The implementation uses the real map objects already present in `Workspace["=== GREEN AGAIN V5 ==="]`. It does not create placeholder locations for the football field or drain.
+Implementation note: this summary records both the copied V5 MVP baseline and the V6 expansion delta. The first playable V6 pass has been implemented in the active MVP scripts; camera positions and full Play-mode polish still need tuning after hands-on playtest.
 
-## Main Runtime Added
+## V6 Design Expansion Delta
 
-Added:
+New Chapter 5 beats implemented after the existing drain/community sequence:
+
+- `Q5_05_ResidentialAfterRain`: player returns to the residential lane with Cô Hạnh and Em Phúc; uses `ResidentialSt` or a runtime `ResidentialLane` anchor.
+- `Q5_06_CareSmallLives`: player cleans a small tree/bush corner, places a water bowl or small reminder sign, and optionally triggers a simple bird/cat/dog prop or sound cue.
+- `Q5_07_NeighborhoodPlanting`: player plants meaningful young trees at the residential lane, near Nhà văn hóa, and near the river/field.
+- `Q5_08_ReturnToCommunityHouse`: updated ending with Cô Hạnh, Em Phúc, tree ownership, and the small-lives corner.
+
+Scope guard:
+
+- No animal rescue AI/pathfinding is required.
+- Reuse existing cleanup/placement/tree runtime patterns.
+- Add dialogue/objective/state entries before adding any new mechanic.
+
+## Main Runtime Target
+
+Active scripts:
 
 - `ServerScriptService.GreenAgainProject.Runtime_To_Add.StoryRuntimeMVP`
 - `StarterPlayer.StarterPlayerScripts.StoryClientMVP`
 
-Removed old wiring sources:
+Do not recreate old wiring sources:
 
-- `StarterGui.GreenAgainHUD_V5`
+- `StarterGui.GreenAgainHUD_V6`
 - `StarterPlayer.StarterPlayerScripts.GreenAgainObjectiveClient`
 - `ServerScriptService.GreenAgainProject.Runtime_To_Add.MapWiringBootstrap`
 
@@ -33,29 +48,38 @@ Kept:
 
 ## Story And Quest Flow
 
-Implemented the MVP quest route from Chapter 1 through post-ending free roam:
+Baseline route copied from V5 and V6 target route:
 
 - `Q1_01_ArriveVenSong`
 - `Q1_02_MeetBacXanh`
 - `Q1_03_CleanEntrance`
 - `Q1_04_SortFirstTrash`
+- `Q1_05_MeetChiLan`
 - `Q2_01_ToGrocery`
 - `Q2_02_ObserveVillageTrash`
 - `Q2_03_CleanGrocery`
-- `Q2_04_GroceryCommitment`
+- `Q2_04_SortGroceryTrash`
+- `Q2_05_GroceryCommitment`
+- `Q2_06_TalkToBacXanh`
 - `Q3_01_ToFootballField`
 - `Q3_02_TalkAnhTung`
 - `Q3_03_CleanField`
-- `Q3_04_BeNaMoment`
-- `Q3_05_FieldReminder`
+- `Q3_04_SortFieldTrash`
+- `Q3_05_BeNaMoment`
+- `Q3_06_FieldReminder`
 - `Q4_01_ToRiver`
 - `Q4_02_FollowRiverTrash`
-- `Q4_03_RiverRealization`
+- `Q4_03_SortRiverTrash`
+- `Q4_04_RiverRealization`
 - `Q5_01_FindDrain`
 - `Q5_02_ClearDrain`
-- `Q5_03_GatherCommunity`
-- `Q5_04_PreventReturn`
-- `Q5_05_ReturnToCommunityHouse`
+- `Q5_03_SortDrainTrash`
+- `Q5_04_GatherCommunity`
+- `Q5_05_ResidentialAfterRain` (V6 expansion)
+- `Q5_06_CareSmallLives` (V6 expansion)
+- `Q5_07_NeighborhoodPlanting` (V6 expansion)
+- `Q5_08_ReturnToCommunityHouse` (V6 expansion)
+- `EndingSequence`
 - `PostEnding_FreeRoam`
 
 Implemented systems:
@@ -66,12 +90,46 @@ Implemented systems:
 - Interaction routing for NPCs, locations, trash, placement actions, and drain cleanup.
 - Runtime trash spawning for cleanup quests when needed.
 - Runtime placement markers for MVP prevention/placement actions.
-- Notebook toast once per chapter.
+- Notebook book/panel once per chapter: each unlocked chapter becomes a page, opens automatically on unlock, and can be reopened with the `Nhật ký` button or `N`.
 - Ending text after the final dialogue.
+- V6 Ch5 expansion route from `Q5_04_GatherCommunity` through `Q5_08_ReturnToCommunityHouse`, `EndingSequence`, and `PostEnding_FreeRoam`.
+- `Q5_05_PreventReturn` is no longer part of the active route; `Q5_07_NeighborhoodPlanting` replaces that prevention beat.
+- Visible placeholder NPC models are created for `CoHanh` and `EmPhuc` if real NPC models are not present yet. These temporary models have simple body/head parts, nameplates, `NpcId`, `InteractId`, and runtime NPC attributes so Cô Hạnh can be interacted with in `Q5_05_ResidentialAfterRain`.
+- `Q5_05_ResidentialAfterRain` stages Cô Hạnh / Em Phúc on the residential lane at `Y=51.15`; runtime verification showed placeholder bottoms at `Y=48.350` against road ground `Y=48.345`.
+- `Q5_06_CareSmallLives` stages them beside, not on top of, the care-corner placement markers: Cô Hạnh at `(242.0, 51.15, -3382.0)` and Em Phúc at `(250.0, 51.15, -3382.0)`.
+
+## Cinematic Cutscene Foundation
+
+Implemented in the active MVP scripts:
+
+- Server RemoteEvents: `OnCutsceneStart`, `OnCutsceneFinished`.
+- Server cutscene sessions guard against stale/wrong quest completions.
+- Server ignores interaction requests while a player has an active cutscene session.
+- Client cutscene runner locks interaction UI, hides marker/tracker/notebook surfaces, sets camera to `Scriptable`, shows letterbox/title/subtitle, tweens camera, then restores camera/UI.
+- Missing cutscene data falls back by finishing the server session so the quest does not hard-lock.
+- 2026-07-05 cinematic pass: each required V6 cutscene now has 2-4 camera shots instead of a single lightweight shot.
+- `CS0` and `CS5E` use black fade transitions; the runner now supports `fadeFromBlack`, `fadeToBlack`, immediate camera `set`, and per-shot subtitles/timing.
+- `CS5C` and `CS5D` camera shots now point at the corrected residential lane coordinates on `PROPS_AND_INTERACTABLES_REVIEW.Loose_Props.duong`.
+
+Current lightweight cutscene ids:
+
+- `CS0`: intro title after entering main map.
+- `CS1`: Nhà văn hóa/Bác Xanh.
+- `CS1B`: first cleanup result at trash site.
+- `CS2`: tạp hóa.
+- `CS3`: sân bóng.
+- `CS4`: bờ sông.
+- `CS5A`: cống nghẹt intro.
+- `CS5B`: after clearing drain.
+- `CS5C`: ngõ sau mưa.
+- `CS5D`: góc sống nhỏ.
+- `CS5E`: ending Nhà văn hóa.
+
+Status: cinematic foundation implemented. Camera coordinates are now doc-aligned enough for a first playtest, but still need full-route QA from `CS0` through `CS5E` after the menu flow is entered normally.
 
 ## Dialogue
 
-Added data-driven dialogue for the main V5 route:
+Added data-driven dialogue for the main V6 route:
 
 - Bác Xanh intro
 - Chị Lan sorting explanation
@@ -80,7 +138,10 @@ Added data-driven dialogue for the main V5 route:
 - Ông Sáu river sequence
 - Drain realization with Bác Xanh and Chị Lan
 - Community gather reactions from Cô Tư, Anh Tùng, Ông Sáu, Chị Lan
-- Ending dialogue with Bác Xanh, Chị Lan, Cô Tư, Anh Tùng, Ông Sáu, Bé Na
+- Residential after-rain dialogue with Cô Hạnh and Em Phúc (V6 expansion)
+- Small-lives/corner-care dialogue with Em Phúc, Bé Na, and Bác Xanh (V6 expansion)
+- Tree planting dialogue with Cô Hạnh, Chị Lan, and Em Phúc (V6 expansion)
+- Ending dialogue with Bác Xanh, Chị Lan, Cô Tư, Anh Tùng, Ông Sáu, Bé Na, Cô Hạnh, and Em Phúc
 
 Dialogue supports:
 
@@ -102,6 +163,18 @@ Used existing objects:
 - `KhungThanh_02_Marker`
 - `NPC_OngSau_Marker`
 - `OngThoatNuoc`
+- V6 runtime anchors:
+  - `ResidentialLane`: `(250.00, 48.90, -3370.00)` on `PROPS_AND_INTERACTABLES_REVIEW.Loose_Props.duong`
+  - `SmallLivesCorner`: `(246.00, 48.90, -3385.00)` on the same residential lane
+  - `TreePlantingZone`: `(250.00, 48.90, -3370.00)`
+- These replaced the first-pass coordinates near Cô Tư's grocery, which were too close to the shop and not clearly a residential lane.
+
+Chapter 3 sân bóng interaction update:
+
+- Holder/marker khung thành có thể bị xóa hoặc không tương tác được.
+- `Q3_01_ToFootballField`, `Q3_03_CleanField`, and `Q3_06_FieldReminder` now use `FieldCenter` instead of `FieldA`.
+- `FieldCenter` is an invisible runtime interaction anchor at `(-59.66, 55.45, -3309.73)`, placed at the center of the real football field.
+- This anchor is only for interaction/marker routing; it is not a visual placeholder for the field.
 
 Drain object:
 
@@ -117,7 +190,7 @@ Implemented a new client HUD:
 - Interaction prompt.
 - Dialogue panel.
 - Feedback toast.
-- Notebook toast.
+- Notebook book with previous/next page navigation.
 - End overlay.
 
 Marker behavior:
@@ -130,7 +203,7 @@ Marker behavior:
 
 Removed the old top-left text:
 
-- Removed source scripts/UI that generated `Đang nối map Green Again V5...`.
+- Removed source scripts/UI that generated `Đang nối map Green Again V6...`.
 - Verified no labels with that text spawn during Play.
 
 ## UI Polish
@@ -159,8 +232,15 @@ Observed in Roblox Studio on 2026-07-03:
 
 - `StarterGui.MainMenuGui.MainMenuController` now exists and appears to be the team's current waiting screen / main menu work.
 - This is separate from the story HUD in `StoryClientMVP`.
+- `ReplicatedFirst.GreenAgainStartupLoader` now shows a Green Again logo loading screen before the waiting screen is ready.
+- Startup loader behavior:
+  - Calls `ReplicatedFirst:RemoveDefaultLoadingScreen()`.
+  - Shows logo asset `rbxassetid://112991523200169` on a dark green loading screen.
+  - Waits for `MainMenuGui.LogoImage`, `Workspace.MainMenuAssets.PlayBtn`, and `Workspace.MainMenuAssets.SetBtn`.
+  - Fades out after the menu is ready, with a max wait fallback.
+  - Writes QA attributes on `PlayerGui`: `GreenAgainStartupLoaderShown`, `GreenAgainStartupLoaderReady`, `GreenAgainStartupLoaderDuration`, `GreenAgainStartupLoaderClosed`.
 - Current behavior from the script:
-  - Locks player controls while in menu.
+  - Holds the player in place during menu by anchoring the character at the menu scene, while leaving PlayerModule input state alive.
   - Uses a scriptable camera at roughly `(-249.381, 49.143, -3296.098)`.
   - Creates runtime `Workspace.MainMenuAssets`.
   - Adds a 2D logo image with asset id `rbxassetid://112991523200169`.
@@ -174,10 +254,11 @@ Observed in Roblox Studio on 2026-07-03:
   - The old PLAY transition could unanchor the character near the menu scene, causing the player to fall and die before respawning.
   - `MainMenuController` now resolves `Workspace["=== GREEN AGAIN V5 ==="].MAP_ROUTE.00_Spawn_And_Teleport.SpawnLocation` and pivots the character to that safe spawn plus a small Y offset before physics resumes.
   - Character velocity is reset during the transition to avoid carried falling momentum.
-  - After PLAY, `MainMenuController` force-resets PlayerModule controls with a `Disable()`/`Enable()` cycle, then briefly keeps humanoid/camera/player controls restored before destroying the menu GUI. The keep-alive pass no longer clears character velocity continuously, so strafing, walking backward, stopping, and jumping are not suppressed after the fade.
+  - `MainMenuController` no longer disables/re-enables PlayerModule controls while the menu is open. The character is held in place by anchoring, while PlayerModule keeps receiving normal key up/down events. This avoids stale WASD/jump states after PLAY.
+  - On PLAY, the script only clears any pending ClickToMove path from the 3D PLAY click, then unanchors the character and restores the camera/humanoid. Do not force `DevComputerMovementMode` or add delayed control resets; both can make movement lock or drift.
 - Story UI gating:
   - `StoryClientMVP` treats `MainMenuGui` as an active menu guard only while the GUI is still enabled.
-  - While enabled `MainMenuGui` exists, quest tracker, prompt, touch button, dialogue panel, notebook toast, and objective marker are forced hidden.
+  - While enabled `MainMenuGui` exists, quest tracker, prompt, touch button, dialogue panel, notebook book/panel, and objective marker are forced hidden.
   - After PLAY, the story UI still stays hidden on the waiting island.
   - Quest tracker and objective marker appear only after the player reaches the main island activation zone.
 - Ownership note:
@@ -194,6 +275,7 @@ Changed `SprintStaminaScript`:
 - Removed stamina drain, stamina recovery, cooldown, and sprint exhaustion logic.
 - Player can hold Left Shift or Right Shift to run faster for as long as Shift is held.
 - Walk speed now toggles directly between default speed `16` and sprint speed `25`.
+- Sprint is event-based: it changes speed only on Shift press/release, not every Heartbeat.
 
 ## Height And Position Fixes
 
@@ -210,13 +292,13 @@ Validated values during Play:
 
 ## Doc-Driven Patch From Full Build Guide
 
-Applied after `GREEN_AGAIN_V5_FULL_GAME_DOCUMENT_AND_BUILD_GUIDE.md` was created:
+Applied after `GREEN_AGAIN_V6_FULL_GAME_DOCUMENT_AND_BUILD_GUIDE.md` was created:
 
 - Added `BacXanh_Q1_AfterClean`, a short after-cleanup beat before sending the player to Chị Lan.
 - Changed Q5 community gather to require the three main return visits from Cô Tư, Anh Tùng, and Ông Sáu.
 - Kept Chị Lan's Q5 role in the drain aftermath and ending, without requiring her as the fourth gather target.
 - Sent a `freeRoam` objective payload after ending so `StoryClientMVP` hides tracker/marker cleanly.
-- Extended gameplay positions for TrashSite, Grocery, FieldA, FieldB, River, and Drain so runtime markers/trash/placements use grounded map locations.
+- Extended gameplay positions for TrashSite, Grocery, FieldA, FieldB, FieldCenter, River, and Drain so runtime markers/trash/placements use grounded map locations.
 - Objective marker for cleanup and placement quests now follows the current uncollected trash or unplaced action instead of only pointing at the broad area.
 - Added explicit cleanup spawn positions for Ch4 river trash and Ch5 drain trash, so those clusters no longer rely on broad area offsets.
 - Changed cleanup trash from quest-time spawning to ambient pollution:
@@ -267,11 +349,85 @@ Expanded the MVP loop after the user requested deeper gameplay:
   - Before interaction it is a planting marker.
   - After interaction it becomes a trunk plus green crown.
 
+## Trash Asset Library
+
+Structured the new `game.Workspace.Trash` asset folder so future runtime work can reuse imported trash models safely.
+
+Current purpose:
+
+- `Workspace.Trash` is a source asset library and scene-dressing holder.
+- Active quest trash, bins, and placement props are spawned/cloned into the current runtime folder, `Workspace.GreenAgainV5_StoryRuntime`.
+- Source templates in `Workspace.Trash` keep `Interactable=false` so `StoryClientMVP` does not treat them as live quest targets.
+
+Current structure:
+
+```text
+Workspace.Trash
++-- Collectibles
+|   +-- Plastic
+|   +-- Metal
+|   +-- PaperCardboard
+|   +-- Mixed
+|   +-- Organic
+|   +-- Hazardous
++-- Props
+|   +-- Bins
+|   +-- Piles
+|   +-- LargeDebris
++-- ScenePlacements
++-- _Unsorted
++-- README_TrashLibrary
+```
+
+Important details:
+
+- There was previously a duplicate root name issue: one `Workspace.Trash` was a `Model`, another was a `Folder`.
+- The root is now a single `Folder`.
+- The old placed trash scene was preserved under `Workspace.Trash.ScenePlacements.LegacyTrashScene_CongArea`.
+- Imported scripts inside trash source assets were disabled, not deleted.
+- Template attributes now include `GreenAgainV6`, `GreenAgainAssetRole`, `GreenAgainKind`, `TrashCategory`, `ObjectName`, `Action`, and `Interactable=false`.
+- Full usage rules are documented in `docs/V6/GREEN_AGAIN_V6_TRASH_ASSET_LIBRARY.md`.
+
+Runtime replacement patch on 2026-07-04:
+
+- `StoryRuntimeMVP` now clones cleanup trash visuals from `Workspace.Trash.Collectibles` instead of building old primitive part models.
+- `StoryRuntimeMVP` now clones sorting bin visuals from `Workspace.Trash.Props.Bins.TrashCan_P7` instead of using plain colored block bins.
+- Each runtime clone is wrapped as a `Model`, tagged with `GreenAgainAssetRole="RuntimeClone"` and `SourceTrashTemplate`, and parented under `Workspace.GreenAgainV5_StoryRuntime`.
+- Runtime clone placement uses bounding-box grounding: after pivoting to the quest position, the clone shifts so its bottom sits exactly on the configured spawn Y.
+- Current cleanup mapping is documented in `docs/V6/GREEN_AGAIN_V6_TRASH_ASSET_LIBRARY.md`.
+
+Cleanup diversity patch on 2026-07-04:
+
+- Cleanup quests now spawn more varied visuals across all chapters: 10 items in Q1, 9 in Q2, 10 in Q3, 9 in Q4, and 9 in Q5.
+- Dirt/stain cleanup visuals use `Workspace.Trash.Props.Piles` (`TrashPile_Part` or `TrashPile_Model`) instead of ad hoc primitive stains.
+- Pile/stain runtime clones now support per-entry `rotation`, `preserveTemplateRotation`, and `heightOffset`. `TrashPile_Part` uses `CFrame.Angles(math.rad(90), 0, 0)`, while `TrashPile_Model` keeps its template rotation.
+- Pile/stain runtime clones now use per-entry `heightOffset = -0.04`, placing the thin stain plane slightly into the ground so it does not appear to float.
+- Runtime grounding now uses world-corner Y extents instead of `Model:GetBoundingBox()` height, which keeps rotated flat pile parts from floating above the ground.
+- Mixed trash bag runtime clones now support per-entry `scale`; `TrashBag_BlackSmall` uses `1.45`, and `TrashBag_Garbage01` uses `1.25`.
+- `Q1_03_CleanEntrance` trash spawn Y was corrected from the old floating height to `48.43`; normal Q1 clone bottoms sit at `48.43`, while Q1 pile bottoms sit around `48.39` because of `heightOffset = -0.04`.
+
+Sorting minigame patch on 2026-07-04:
+
+- Sorting quests no longer auto-sort a whole category when the player presses `E` on a bin.
+- Interacting with any sorting bin opens a drag-and-drop minigame in `StoryClientMVP`.
+- The UI shows the current bag items as visual 3D trash cards and four bins: `Nguy hiểm`, `Tái chế`, `Hữu cơ`, `Còn lại`.
+- Each trash card uses a `ViewportFrame` preview cloned from the item's `Workspace.Trash` source template, so the minigame shows actual trash/pile models instead of text-only buttons.
+- Pile previews use world-corner bounds and a higher angled camera so thin `Props.Piles` assets render visibly instead of edge-on.
+- `PlasticBag_Crumpled` previews also use the higher angled camera so the crumpled plastic bag is framed visibly.
+- `StoryRuntimeMVP` now tracks `state.bagItems` with each picked item's `category`, `name`, and `templatePath`.
+- `StoryRuntimeMVP` validates each drop through `OnSortingMinigameSubmit`.
+- Current mapping:
+  - `Plastic`, `Metal`, `Paper` -> `Recycle` / `Tái chế`.
+  - `Mixed` -> `Mixed` / `Còn lại`.
+  - `Organic` -> `Organic` / `Hữu cơ`.
+  - `Hazardous` -> `Hazardous` / `Nguy hiểm`.
+- When the bag is empty, the server closes the minigame and completes the sorting quest.
+
 ## Deleted Legacy Pieces
 
 Deleted old MVP wiring pieces to avoid duplicate UI and duplicate behavior:
 
-- Old HUD: `GreenAgainHUD_V5`
+- Old HUD: `GreenAgainHUD_V6`
 - Old client objective script: `GreenAgainObjectiveClient`
 - Old server bootstrap: `MapWiringBootstrap`
 
@@ -279,6 +435,21 @@ The current active MVP path is:
 
 - Server: `StoryRuntimeMVP`
 - Client: `StoryClientMVP`
+
+## Performance Fixes
+
+- Fixed a major client-side CPU issue in `StoryClientMVP`.
+- Cause:
+  - `findNearbyTarget()` previously called `workspace:GetDescendants()` every Heartbeat while normal gameplay was active.
+  - When dialogue opened, `StoryClientMVP` returned early before that scan, which is why CPU dropped and lag stopped during conversations.
+- Current behavior:
+  - Interactable objects are cached by `InteractId`.
+  - The cache is built once, updated from `workspace.DescendantAdded/DescendantRemoving`, and refreshed only occasionally as a fallback.
+  - Nearby interaction checks are throttled to about 5-6 times per second instead of 60 times per second.
+  - Prompt UI text/visibility is only updated when the target or text actually changes.
+  - Old duplicate HUD cleanup now runs once instead of every Heartbeat.
+- `SprintStaminaScript` no longer writes `Humanoid.WalkSpeed` every Heartbeat. Shift sprint is now event-based: speed changes only when Shift is pressed or released.
+- Team rule: do not add `workspace:GetDescendants()`, large descendant scans, or repeated UI property writes inside `Heartbeat`/`RenderStepped` without caching and throttling.
 
 ## Test Results
 
@@ -294,6 +465,8 @@ Play tests performed:
 - Verified stamina UI no longer appears.
 - Verified sprint script now has no stamina/cooldown variables and keeps direct Shift sprint behavior.
 - Verified Q1 marker and trash use corrected ground-level positions.
+- Lowered the client objective marker offset from `Vector3.new(0, 4.4, 0)` to `Vector3.new(0, 3.4, 0)` so the guide marker sits closer to the target.
+- Removed the small fake trash/can props `BanSoanRac_ChongRacGia_1`, `BanSoanRac_ChongRacGia_2`, and `BanSoanRac_ChongRacGia_3` from the trash sorting station scene.
 - Verified CS0 intro overlay appears after entering the main map.
 - Verified Q1 after-cleanup Bác Xanh dialogue opens before `Q1_04_SortFirstTrash`.
 - Verified free-roam objective payload hides tracker and removes marker.
@@ -305,8 +478,26 @@ Play tests performed:
   - `(-198.184, 51.689, -3502.522)`
   - `(-204.840, 54.054, -3481.669)`
 - Verified Ch4 river trash spawns at those three positions, with client streaming all three models after teleporting near the river area.
-- Verified 16 ambient trash models exist at game start, with 53 visible child parts and `Interactable=false`.
-- Verified entering Q1 cleanup activates only the 3 Q1 trash objects.
+- Previously verified 16 ambient trash models existed at game start, with 53 visible child parts and `Interactable=false`; the 2026-07-04 diversity patch now maps 47 cleanup visuals total: Q1=10, Q2=9, Q3=10, Q4=9, Q5=9.
+- Verified entering Q1 cleanup activates exactly 10 Q1 trash objects.
+- Verified Q1 runtime clone bottoms use the corrected ground-level Y; normal Q1 clone bottoms sit at `48.43`, while Q1 pile bottoms sit around `48.39` because of `heightOffset = -0.04`.
+- Q1 sorting visual cards use `ViewportFrame` previews with `WorldModel` children and template paths; after the diversity patch Q1 bag items include:
+  - `Collectibles/Mixed/TrashBag_BlackSmall`
+  - `Collectibles/Plastic/PlasticBottle_03`
+  - `Collectibles/Metal/MetalCan_Crushed`
+  - `Props/Piles/TrashPile_Part`
+  - `Collectibles/Plastic/CandyWrapper`
+  - `Collectibles/PaperCardboard/PaperSheet`
+  - `Props/Piles/TrashPile_Model`
+  - `Collectibles/PaperCardboard/CardboardBox_Carton`
+  - `Collectibles/Plastic/PlasticBag_Crumpled`
+  - `Props/Piles/TrashPile_Part`
+- Fixed sorting drag alignment after visual cards were added:
+  - Removed the old click-offset based drag positioning.
+  - Drag clone now anchors at its center and follows the pointer using coordinates corrected by `StoryClientMVP`'s `ResponsiveScale`.
+  - Verified Q1 sorting previously opened at UI scale `0.84765625`; current Q1 cleanup now feeds 10 visual items into the same centered drag path.
+- Verified wrong submit `Plastic -> Mixed` keeps quest `Rác Đi Đâu?` active and reopens the minigame with retry text.
+- Verified correct submits `Plastic -> Recycle`, `Metal -> Recycle`, `Mixed -> Mixed` close the minigame and advance to `Q1_05_MeetChiLan`.
 - Verified collecting Q1 trash hides those objects while other ambient pollution remains visible.
 - Verified collecting a plastic bottle marks only that model collected/invisible, while the nearby bag/can remain visible and interactable.
 - Verified Q1 cleanup now leads into a sorting step at the trash collection point.
@@ -327,5 +518,37 @@ Play tests performed:
 - Simulated post-PLAY flow:
   - after `MainMenuGui` is removed, waiting island still has quest tracker hidden and no objective marker.
   - after moving to main island, quest tracker becomes visible and one `CurrentStoryObjectiveAnchor` marker is created.
+- Verified `Workspace.Trash` has exactly one root folder after restructuring.
+- Verified `Workspace.Trash` source templates have no descendants with `Interactable=true`.
+- Verified no enabled `Script` or `LocalScript` remains inside `Workspace.Trash`.
+- Previous Play-mode verification spawned cleanup trash clones from `Workspace.Trash` into `Workspace.GreenAgainV5_StoryRuntime`.
+- Verified all spawned cleanup clones have `SourceTrashTemplate` pointing to the new library asset.
+- Verified clone bottom Y matches the configured spawn Y for Q1, Q2, Q3, Q4 and Q5 cleanup trash.
+- Verified an automated Q1 flow reaches `Q1_04_SortFirstTrash` and spawns 4 sorting bin clones from `Workspace.Trash.Props.Bins.TrashCan_P7`.
+- `TrashSite` gameplay/interact Y was lowered to `51.52` so the green objective marker and sorting-bin interaction are reachable from the ground.
+- Runtime sorting-bin world objects are now invisible `StorySortingBinHitbox_*` parts; visible bins come from the static sorting station scene, avoiding duplicate small bin/can props in front of the table.
+- Verified startup loader in Play mode:
+  - `GreenAgainStartupLoaderShown=true`
+  - `GreenAgainStartupLoaderReady=true`
+  - `GreenAgainStartupLoaderClosed=true`
+  - duration was about `3.59s`
+  - loader ScreenGui was destroyed after fade
+  - `MainMenuGui` remained enabled with `LogoImage`, `PlayBtn`, and `SetBtn` ready.
 
 Known unrelated console noise from imported assets remained, including texture permission and existing asset script warnings. These were not introduced by the MVP story scripts.
+
+## Bug Fixes Patch (2026-07-05)
+
+- Fixed floating/buried trash height issues for Chapter 3 and Chapter 4:
+  - Chapter 3 field trash spawn height is `48.23`, measured against the local Terrain hit at about `Y=48.203`; normal clone bottoms sit just above terrain, while pile/stain bottoms use `heightOffset=-0.04`.
+  - Chapter 4 river trash spawn height is `48.23`, measured against the local Terrain hit at about `Y=48.203`; this replaces the older `49.5` value that left some cleanup items visibly floating.
+  - Ch5 drain staging moves Bác Xanh and Chị Lan onto the dry bank: `BacXanh = Vector3.new(-216.0, 53.58, -3512.0)` and `ChiLan = Vector3.new(-213.0, 53.36, -3510.0)`. NPC rig pivots are about 3 studs above foot level, so these values align their feet with the bank terrain instead of the water.
+- Updated placement visuals to hide the flat plane and render 3D models properly:
+  - `setModelVisible` now hides `Decal`, `Texture`, and `SurfaceAppearance` to ensure the flat placeholder part becomes completely invisible.
+  - The Chapter 3 Sign Board placement now spawns an actual 3D SignBoard (`Part` + `SurfaceGui` text) at the football field instead of a flat visual marker.
+  - Changed football field sign placement coordinates to match the grass height `Vector3.new(-126.278, 49.5, -3356.146)`.
+  - Corrected the football field sign text to "Không xả rác" (previously "Biển nhắc sau trận").
+- Split Bác Xanh's dialogue out from Cô Tư's after-grocery interaction to improve the flow:
+  - Added a new quest `Q2_06_TalkToBacXanh` right after `Q2_05_GroceryCommitment`.
+  - Added new dialogue entry `BacXanh_Q2_After` containing Bác Xanh's lines about the grocery store and football field.
+  - Fixed Bác Xanh's spawn coordinate in `Q2_06_TalkToBacXanh` to stand correctly on the grass at `Vector3.new(114.281, 51.73, -3310.235)` (his actual HumanoidRootPart height, rather than the baseplate center).

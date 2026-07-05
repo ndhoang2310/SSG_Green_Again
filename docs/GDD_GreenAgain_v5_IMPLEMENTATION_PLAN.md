@@ -233,7 +233,9 @@ Quest chain:
 Q2_01_ToGrocery
 -> Q2_02_ObserveVillageTrash
 -> Q2_03_CleanGrocery
--> Q2_04_GroceryCommitment
+-> Q2_04_SortGroceryTrash
+-> Q2_05_GroceryCommitment
+-> Q2_06_TalkToBacXanh
 -> Q3_01_ToFootballField
 ```
 
@@ -243,7 +245,9 @@ Build tasks:
 - [ ] Cô Tư intro conversation.
 - [ ] Trash cluster: túi nilon, vỏ bánh, chai nước near tạp hóa.
 - [ ] Optional inspect points around đường làng.
+- [ ] Sorting minigame for grocery trash at `TrashSite`.
 - [ ] AfterQuest Cô Tư commitment.
+- [ ] Bác Xanh transition dialogue outside grocery.
 - [ ] Add thùng rác visual/commitment near tạp hóa.
 - [ ] Notebook Ch2.
 - [ ] Transition to sân bóng.
@@ -261,8 +265,9 @@ Quest chain:
 Q3_01_ToFootballField
 -> Q3_02_TalkAnhTung
 -> Q3_03_CleanField
--> Q3_04_BeNaMoment
--> Q3_05_FieldReminder
+-> Q3_04_SortFieldTrash
+-> Q3_05_BeNaMoment
+-> Q3_06_FieldReminder
 -> Q4_01_ToRiver
 ```
 
@@ -272,6 +277,7 @@ Build tasks:
 - [ ] Add field trash: chai nước, túi snack, ly nhựa.
 - [ ] Anh Tùng intro dialogue with Bé Na interruption.
 - [ ] Cleanup around ghế/khung thành/edge sân.
+- [ ] Sorting minigame for field trash at `TrashSite`.
 - [ ] Bé Na after dialogue.
 - [ ] Add field reminder: biển/thùng/commitment.
 - [ ] Notebook Ch3.
@@ -289,7 +295,8 @@ Quest chain:
 ```text
 Q4_01_ToRiver
 -> Q4_02_FollowRiverTrash
--> Q4_03_RiverRealization
+-> Q4_03_SortRiverTrash
+-> Q4_04_RiverRealization
 -> Q5_01_FindDrain
 ```
 
@@ -299,6 +306,7 @@ Build tasks:
 - [ ] Ông Sáu intro dialogue.
 - [ ] River trail markers from bờ sông to khúc sông.
 - [ ] River trash cluster/visual: bags caught on grass/edge.
+- [ ] Sorting minigame for river trash at `TrashSite`.
 - [ ] AfterQuest realization dialogue.
 - [ ] Notebook Ch4.
 - [ ] Transition to cống.
@@ -315,9 +323,10 @@ Quest chain:
 ```text
 Q5_01_FindDrain
 -> Q5_02_ClearDrain
--> Q5_03_GatherCommunity
--> Q5_04_PreventReturn
--> Q5_05_ReturnToCommunityHouse
+-> Q5_03_SortDrainTrash
+-> Q5_04_GatherCommunity
+-> Q5_05_PreventReturn
+-> Q5_06_ReturnToCommunityHouse
 -> EndingSequence
 ```
 
@@ -412,4 +421,3 @@ Do this next:
 Reason:
 
 Chapter 1 is the vertical slice. If Chapter 1 proves dialogue -> marker -> cleanup -> sorting -> notebook works, every later chapter becomes content/data plus a few special interactions.
-
